@@ -3,8 +3,8 @@ package dbbackend
 //Package for all interactions with a database
 
 //Generates random short strings
-type Generater interface {
-	GenerateRandomStrings() (string, error)
+type Generator interface {
+	GenerateRandomString(n int) string
 }
 
 //Sends user requests to database.Reader
