@@ -24,3 +24,8 @@ type DbResponseGetter interface {
 	GetDbURLResponse(shortURL string) (string, error)
 	GetDbDataResponse(data string) (string, error)
 }
+
+//Parse if full URL that we got is a URL
+type Parser interface {
+	ParseURL(fullURL string) bool
+}
