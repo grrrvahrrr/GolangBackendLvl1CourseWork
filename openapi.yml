@@ -95,3 +95,22 @@ paths:
                 $ref: "#/components/schemas/Data"
         '404':
           description: data not found
+  /{shortURL}:
+    get:
+      description: Redirect to FullURL
+      operationId: Redirect
+      parameters:
+        - name: shortURL
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+           description: successful operation
+           content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/URLs"
+        '404':
+          description: data not found
