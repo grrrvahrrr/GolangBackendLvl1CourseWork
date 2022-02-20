@@ -3,6 +3,7 @@ package dbbackend
 import "context"
 
 //Package for all interactions with a database
+//Sould only import urldata.go
 
 //Port to use in data storage
 type DataStore interface {

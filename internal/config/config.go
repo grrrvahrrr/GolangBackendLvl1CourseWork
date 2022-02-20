@@ -5,8 +5,9 @@ import (
 )
 
 type Config struct {
-	//Add config fields here
-
+	ReadTimeout       int
+	WriteTimeout      int
+	ReadHeaderTimeout int
 }
 
 func (c *Config) loadConfigFile(file string) error {
