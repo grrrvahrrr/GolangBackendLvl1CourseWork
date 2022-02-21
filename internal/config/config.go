@@ -1,6 +1,10 @@
 package config
 
 import (
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/joho/godotenv"
 )
 
@@ -11,9 +15,25 @@ type Config struct {
 }
 
 func (c *Config) loadConfigFile(file string) error {
-	err := godotenv.Load(file)
+	var err error
+	err = godotenv.Load(file)
 	if err != nil {
 		return err
+	}
+	c.ReadTimeout, err = strconv.Atoi(os.Getenv("READTIMEOUT"))
+	if err != nil {
+		//Log it
+		log.Println(err)
+	}
+	c.WriteTimeout, err = strconv.Atoi(os.Getenv("WRITETIMEOUT"))
+	if err != nil {
+		//Log it
+		log.Println(err)
+	}
+	c.ReadHeaderTimeout, err = strconv.Atoi(os.Getenv("READHEADERTIMEOUT"))
+	if err != nil {
+		//Log it
+		log.Println(err)
 	}
 
 	return nil

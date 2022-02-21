@@ -2,7 +2,12 @@ package process
 
 //This package is goint to hold business processes and import only urldata.go
 
-import "math/rand"
+import (
+	"log"
+	"math/rand"
+	"net/url"
+	"strconv"
+)
 
 //Generates random short strings
 func GenerateRandomString(n int) string {
@@ -14,12 +19,29 @@ func GenerateRandomString(n int) string {
 	return string(b)
 }
 
-//Parse if full URL that we got is a URL
-func ParseURL(fullURL string) bool {
-	return true
+//Validate full URL that we got is a URL
+func ValidateURL(fullURL string) (bool, *url.URL) {
+	u, err := url.ParseRequestURI(fullURL)
+	if err != nil {
+		return false, nil
+	}
+	return true, u
 }
 
 //Update neccessary data to send it to DB
-func UpdateData(shortURL string, data string) (newData string, err error) {
-	return newData, nil
+//UpdateNumOfUses here, in future different functions for new elements of data
+func UpdateNumOfUses(data map[string]string) (map[string]string, error) {
+	v, ok := data["NumOfUses"]
+	if !ok {
+		data["NumOfUses"] = "1"
+	} else {
+		iv, err := strconv.Atoi(v)
+		if err != nil {
+			//Log it with logrus
+			log.Println(err)
+		}
+		iv++
+		data["NumOfUses"] = strconv.Itoa(iv)
+	}
+	return data, nil
 }

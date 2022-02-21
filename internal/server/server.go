@@ -1,6 +1,7 @@
 package server
 
 import (
+	"CourseWork/internal/config"
 	"CourseWork/internal/dbbackend"
 	"context"
 	"log"
@@ -13,16 +14,16 @@ type Server struct {
 	ds  *dbbackend.DataStorage
 }
 
-func NewServer(addr string, h http.Handler) *Server {
+func NewServer(addr string, h http.Handler, config config.Config) *Server {
 	s := &Server{}
 
 	//Server settings should come from config
 	s.srv = http.Server{
 		Addr:              addr,
 		Handler:           h,
-		ReadTimeout:       30 * time.Second,
-		WriteTimeout:      30 * time.Second,
-		ReadHeaderTimeout: 30 * time.Second,
+		ReadTimeout:       time.Duration(config.ReadTimeout) * time.Second,
+		WriteTimeout:      time.Duration(config.WriteTimeout) * time.Second,
+		ReadHeaderTimeout: time.Duration(config.ReadHeaderTimeout) * time.Second,
 	}
 	return s
 }

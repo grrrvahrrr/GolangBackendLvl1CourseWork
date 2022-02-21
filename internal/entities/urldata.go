@@ -1,7 +1,10 @@
 package entities
 
+import "github.com/google/uuid"
+
 type UrlData struct {
+	Id       uuid.UUID
 	FullURL  string
 	ShortURL string
-	Data     string //to be remade into []string or map[string]string
+	Data     map[string]string
 }
