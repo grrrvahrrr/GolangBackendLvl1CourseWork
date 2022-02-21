@@ -10,9 +10,9 @@ import (
 )
 
 //Generates random short strings
-func GenerateRandomString(n int) string {
+func GenerateRandomString() string {
 	var symbols = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	b := make([]rune, n)
+	b := make([]rune, 10)
 	for i := range b {
 		b[i] = symbols[rand.Intn(len(symbols))]
 	}
@@ -20,12 +20,9 @@ func GenerateRandomString(n int) string {
 }
 
 //Validate full URL that we got is a URL
-func ValidateURL(fullURL string) (bool, *url.URL) {
-	u, err := url.ParseRequestURI(fullURL)
-	if err != nil {
-		return false, nil
-	}
-	return true, u
+func ValidateURL(fullURL string) error {
+	_, err := url.ParseRequestURI(fullURL)
+	return err
 }
 
 //Update neccessary data to send it to DB
@@ -45,3 +42,5 @@ func UpdateNumOfUses(data map[string]string) (map[string]string, error) {
 	}
 	return data, nil
 }
+
+//ADD DATA DELETED
