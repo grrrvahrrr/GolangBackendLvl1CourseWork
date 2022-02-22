@@ -32,13 +32,14 @@ package database
 // 	var url entities.UrlData
 
 // 	url.Id = uuid.New()
-// 	url.FullURL = "//test4.com/"
+// 	url.FullURL = "//test5.com/"
 // 	url.ShortURL = "bitme.com/" + process.GenerateRandomString()
 
-// 	err = fd.WriteURL(ctx, url)
+// 	newurldata, err := fd.WriteURL(ctx, url)
 // 	if err != nil {
 // 		t.Error(err)
 // 	}
+// 	log.Println(&newurldata)
 // }
 
 // func TestReadURL(t *testing.T) {
@@ -75,8 +76,9 @@ package database
 // 	m := make(map[string]string)
 // 	m["NumOfUses"] = "1"
 
-// 	err = fd.WriteData(ctx, id, m)
+// 	newurldata, err := fd.WriteData(ctx, id, m)
 // 	if err != nil {
 // 		t.Error(err)
 // 	}
+// 	log.Println(&newurldata)
 // }

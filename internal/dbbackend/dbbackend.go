@@ -12,8 +12,8 @@ import (
 
 //Port to use in data storage
 type DataStore interface {
-	WriteURL(ctx context.Context, url entities.UrlData) error
-	WriteData(ctx context.Context, id uuid.UUID, data map[string]string) error
+	WriteURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
+	WriteData(ctx context.Context, id uuid.UUID, data map[string]string) (*entities.UrlData, error)
 	ReadURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
 }
 
@@ -28,28 +28,29 @@ func NewDataStorage(dstore DataStore) *DataStorage {
 }
 
 //Write data to data storage
-func (ds *DataStorage) WriteURL(ctx context.Context, url entities.UrlData) error {
+func (ds *DataStorage) WriteURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
 	err := process.ValidateURL(url.FullURL)
 	if err != nil {
-		return fmt.Errorf("validate url error: %w", err)
+		return nil, fmt.Errorf("validate url error: %w", err)
 	}
 
 	url.Id = uuid.New()
-	url.ShortURL = "bitme.com/" + process.GenerateRandomString()
-	err = ds.dstore.WriteURL(ctx, url)
+	url.ShortURL = process.GenerateRandomString()
+	newurldata, err := ds.dstore.WriteURL(ctx, url)
 	if err != nil {
 		//Log it
-		return fmt.Errorf("write url error: %w", err)
+		return nil, fmt.Errorf("write url error: %w", err)
 	}
-	return nil
+
+	return newurldata, nil
 }
 
-func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) error {
+func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
 	var err error
 	u, err := ds.dstore.ReadURL(ctx, url)
 	if err != nil {
 		//Log it
-		return fmt.Errorf("read data error: %w", err)
+		return nil, fmt.Errorf("read data error: %w", err)
 	}
 
 	//Process data -- with more functions can be separated into independent function
@@ -59,13 +60,13 @@ func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) erro
 		log.Println(err)
 	}
 
-	err = ds.dstore.WriteData(ctx, u.Id, m)
+	newurldata, err := ds.dstore.WriteData(ctx, u.Id, m)
 	if err != nil {
 		//Log it
-		return fmt.Errorf("write data error: %w", err)
+		return nil, fmt.Errorf("write data error: %w", err)
 	}
 
-	return nil
+	return newurldata, nil
 }
 
 //Read data from data storage

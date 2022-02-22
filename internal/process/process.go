@@ -42,5 +42,3 @@ func UpdateNumOfUses(data map[string]string) (map[string]string, error) {
 	}
 	return data, nil
 }
-
-//ADD DATA DELETED

@@ -18,13 +18,9 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// Data defines model for Data.
-type Data struct {
-	NumOfRedirects *int64 `json:"NumOfRedirects,omitempty"`
-}
-
 // URLs defines model for URLs.
 type URLs struct {
+	Data     *string `json:"data,omitempty"`
 	FullURL  *string `json:"fullURL,omitempty"`
 	ShortURL *string `json:"shortURL,omitempty"`
 }
@@ -32,7 +28,7 @@ type URLs struct {
 // GetDataParams defines parameters for GetData.
 type GetDataParams struct {
 	// data to be passed as header
-	Data *Data `json:"data,omitempty"`
+	Data *URLs `json:"data,omitempty"`
 }
 
 // SendShortURLParams defines parameters for SendShortURL.
@@ -44,13 +40,13 @@ type SendShortURLParams struct {
 // GetShortURLParams defines parameters for GetShortURL.
 type GetShortURLParams struct {
 	// shortURL to be passed as header
-	ShortURL *string `json:"shortURL,omitempty"`
+	ShortURL string `json:"shortURL"`
 }
 
 // SendFullURLParams defines parameters for SendFullURL.
 type SendFullURLParams struct {
 	// fullURL to shorten
-	FullURL *string `json:"fullURL,omitempty"`
+	FullURL string `json:"fullURL"`
 }
 
 // ServerInterface represents all server handlers.
@@ -94,7 +90,7 @@ func (siw *ServerInterfaceWrapper) GetData(w http.ResponseWriter, r *http.Reques
 
 	// ------------- Optional header parameter "data" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("data")]; found {
-		var Data Data
+		var Data URLs
 		n := len(valueList)
 		if n != 1 {
 			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "data", Count: n})
@@ -164,7 +160,7 @@ func (siw *ServerInterfaceWrapper) GetShortURL(w http.ResponseWriter, r *http.Re
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "shortURL" -------------
+	// ------------- Required header parameter "shortURL" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("shortURL")]; found {
 		var ShortURL string
 		n := len(valueList)
@@ -179,8 +175,12 @@ func (siw *ServerInterfaceWrapper) GetShortURL(w http.ResponseWriter, r *http.Re
 			return
 		}
 
-		params.ShortURL = &ShortURL
+		params.ShortURL = ShortURL
 
+	} else {
+		err := fmt.Errorf("Header parameter shortURL is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "shortURL", Err: err})
+		return
 	}
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
@@ -203,12 +203,15 @@ func (siw *ServerInterfaceWrapper) SendFullURL(w http.ResponseWriter, r *http.Re
 	// Parameter object where we will unmarshal all parameters from the context
 	var params SendFullURLParams
 
-	// ------------- Optional query parameter "fullURL" -------------
+	// ------------- Required query parameter "fullURL" -------------
 	if paramValue := r.URL.Query().Get("fullURL"); paramValue != "" {
 
+	} else {
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "fullURL"})
+		return
 	}
 
-	err = runtime.BindQueryParameter("form", true, false, "fullURL", r.URL.Query(), &params.FullURL)
+	err = runtime.BindQueryParameter("form", true, true, "fullURL", r.URL.Query(), &params.FullURL)
 	if err != nil {
 		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "fullURL", Err: err})
 		return
@@ -386,16 +389,15 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/9SV32vbMBDH/xVxG+zFxGnX7cGPY2wMug1S+jT6oFrnRMWWVN05UIL/93GynCxNSujG",
-	"HvIk68f90Oe+Om+g9l3wDh0TVBugeoWdTp+fNWsZQ/QBI1tMqz/67mezQGMj1qNJ42OnGSqwjj9eQQH8",
-	"FHCc4hIjDMN2yd8/YM0wFHC7uKZD503ftreLa/nMFsTRuqVY0MpHPr55GECWrGt8Omy5lb1Plr+jul1c",
-	"q+QKHUYoYI2RrHdQwcVsLnF8QKeDhQrez+azSyggaF6l9Mol8kRliSyDZK/ZevfNQAVf877YRN0hYySo",
-	"fm3AINXRBh4jGc1asVf3qIImQqM0qRVqkzKycmQ7c7rDbAJFLo8EfhuxgQrelLv6lbl4ZcphGO4KiEjB",
-	"OxrpXs7nMtTeMbqUvQ6htXXKv3wgyW3zuhBD8exq1Nc1EjV9q7ZohOrV/EpcHuHgPKvG986M7oKnI2Bv",
-	"0JmbSQAn6E5CEcKNdUZldonrY4/xaYeVdj53936urv/JMb2Df+WYbpGUvQdzKKDMUs/v5iXR/g3aV4j3",
-	"7Ch/GGPvH6593xr3jtVSWodmVFvup6T7Jfe1E3hz+xO6uW4vyLbZ+jsX1R7hKVrVEz3R6mbSyfCHVvdt",
-	"ph+PINpB3Qc+nTmknVBKNz8qzYiPvY1ooOLY41k3hMPGKg4J43pC0cdWHipzoKosdbCzcXfGSFyuL2C4",
-	"G34HAAD//1TdpwUcCAAA",
+	"H4sIAAAAAAAC/9yUzW7bMAzHX0XgBuxixGnXXXwchg0DskuKnIYeVItOVDiSKtIBisDvPlCW89EmSLee",
+	"upNsk+LHj39zC7VfB+/QMUG1BapXuNbpcTGfpTNEHzCyxfRmNGs5+SkgVEAcrVtCX0DTte1iPjtpo5WP",
+	"fNrYF+MXf/+ANUMvn6xrfHK23Irtq+VfqBbzmUqh0GGEAjYYyXoHFVxNppLHB3Q6WKjg82Q6uYYCguZV",
+	"qrtcIn/LtS+R5ZC2NFvvfhqo4Ee2y52o18gYCarfWzBIdbSBh0zSv2Kv7lEFTYRGaVIr1CZVZMVl9+b0",
+	"GvMVKDJaSfwxYgMVfCj37MsMvkzU+/6ugIgUvKMB+/V0KkftHaNL1esQWlun+ssHktq2BymeU+6LZ31Q",
+	"V9dI1HSt2nEQhDfTmzTml007z6rxnTNDuODpBMVbdOZ2nPYFlKMqBGdjnVEZVIL42GF82jOkfczzTb4V",
+	"2ivm8jaOqYsk4yOYfQFl1nX+Sc4p9F/Q/oVSDyhHfOxsRAMVxw7fC/UvQ+5j59p3rXGfWC1lb2hGtZvD",
+	"JSl/z0vtAu68+4R2nuMZGTe7eO+T780pvqJlPdIULW9HHfUHWj6+M0djI9YsyPaQjwcw+rykn9DKav+P",
+	"pPvKxSsBCeNmRNHFVn5k5kBVWepgJ4N1wkhcbq6gv+v/BAAA//9ksc1d5QcAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

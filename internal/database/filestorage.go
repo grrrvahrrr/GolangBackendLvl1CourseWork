@@ -6,8 +6,11 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -37,62 +40,52 @@ func NewFullDataFile(filename string) (*FullDataFile, error) {
 }
 
 //Writing to a file/db what we got from Backend after validating URLs and Updating Data
-func (fd *FullDataFile) WriteURL(ctx context.Context, url entities.UrlData) error {
+func (fd *FullDataFile) WriteURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
 	fd.URLData = url
 	err := fd.enc.Encode(fd.URLData)
 	if err != nil {
 		//Log it
 		log.Println("err")
-		return err
+		return nil, err
 	}
-	return nil
+	return &entities.UrlData{
+		Id:       fd.URLData.Id,
+		FullURL:  fd.URLData.FullURL,
+		ShortURL: fd.URLData.ShortURL,
+		Data:     fd.URLData.Data,
+	}, nil
 }
 
-func (fd *FullDataFile) WriteData(ctx context.Context, id uuid.UUID, data map[string]string) error {
+func (fd *FullDataFile) WriteData(ctx context.Context, id uuid.UUID, data map[string]string) (*entities.UrlData, error) {
 	for {
 		if err := fd.dec.Decode(&fd.URLData); err != nil {
 			if err == io.EOF {
 				log.Println("URL not found")
-				return nil
+				return nil, nil
 			}
-			return err
+			return nil, err
 		}
 		if id == fd.URLData.Id {
-
 			fd.URLData.Data = data
 			err := fd.enc.Encode(fd.URLData)
 			if err != nil {
 				//Log it
-				return err
+				return nil, err
 			}
-			return nil
+			//Process file
+			err = fd.Sort(id)
+			if err != nil {
+				return nil, err
+			}
+
+			return &entities.UrlData{
+				Id:       fd.URLData.Id,
+				FullURL:  fd.URLData.FullURL,
+				ShortURL: fd.URLData.ShortURL,
+				Data:     fd.URLData.Data,
+			}, nil
 		}
 	}
-	// input, err := ioutil.ReadFile(fd.filename)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// lines := strings.Split(string(input), "\n")
-	// for i, line := range lines {
-	// 	if strings.Contains(line, url.Id.String()) {
-	// 		lines[i] = lines[len(lines)-1]
-	// 		lines[len(lines)-1] = ""
-	// 		lines = lines[:len(lines)-1]
-	// 	}
-	// }
-	// output := strings.Join(lines, "\n")
-	// err = ioutil.WriteFile(fd.filename, []byte(output), 0644)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-
-	// url.Data = data
-	// err = fd.enc.Encode(url)
-	// if err != nil {
-	// 	//Log it
-	// 	return err
-	// }
-	// return nil
 }
 
 //Reads info from file/DB
@@ -106,7 +99,7 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 			return nil, err
 		}
 
-		if url.ShortURL == fd.URLData.ShortURL {
+		if url.FullURL == fd.URLData.FullURL || url.ShortURL == fd.URLData.ShortURL {
 			return &entities.UrlData{
 				Id:       fd.URLData.Id,
 				FullURL:  fd.URLData.FullURL,
@@ -121,4 +114,32 @@ func (fd *FullDataFile) Close() {
 	if fd.file != nil {
 		fd.file.Close()
 	}
+}
+
+func (fd *FullDataFile) Sort(id uuid.UUID) error {
+	input, err := ioutil.ReadFile(fd.filename)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, id.String()) {
+			lines[i] = ""
+			break
+		}
+	}
+	output := strings.Join(lines, "\n")
+	regex, err := regexp.Compile("\n\n")
+	if err != nil {
+		return err
+	}
+	output = regex.ReplaceAllString(output, "\n")
+
+	err = ioutil.WriteFile(fd.filename, []byte(output), 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }

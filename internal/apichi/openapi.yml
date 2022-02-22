@@ -13,13 +13,9 @@ components:
           type: string
         shortURL:
           type: string
-    Data:
-      type: object
-      properties:
-        NumOfRedirects:
-          type: integer
-          format: int64
-        #some other data in future maybe
+        data:
+          type: string
+      #some other data in future maybe
 paths:
   /shortenURL:
     post:
@@ -28,7 +24,7 @@ paths:
         - name: fullURL
           in: query
           description: fullURL to shorten
-          required: false #mb needs to be true
+          required: true
           schema:
             type: string
       responses:
@@ -40,24 +36,6 @@ paths:
                 $ref: "#/components/schemas/URLs"
         '400':
           description: not a URL
-    get:
-      operationId: GetShortURL
-      parameters:
-        - name: shortURL
-          in: header
-          description: shortURL to be passed as header
-          required: false #mb needs to be true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/URLs"
-        '500':
-          description: couldn't generate short URL
   /getData:
     post:
       operationId: SendShortURL
@@ -77,24 +55,6 @@ paths:
                 $ref: "#/components/schemas/URLs"
         '404':
           description: short URL not found
-    get:
-      operationId: GetData
-      parameters:
-        - name: data
-          in: header
-          description: data to be passed as header
-          required: false #mb needs to be true
-          schema:
-            $ref: "#/components/schemas/Data"
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Data"
-        '404':
-          description: data not found
   /{shortURL}:
     get:
       description: Redirect to FullURL
