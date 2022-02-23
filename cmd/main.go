@@ -36,7 +36,7 @@ func main() {
 	dbbe := dbbackend.NewDataStorage(udf)
 	hs := apichi.NewHandlers(dbbe)
 	rt := apichi.NewRouter(hs)
-	srv := server.NewServer(":8080", rt, cfg)
+	srv := server.NewServer(":8000", rt, cfg)
 
 	srv.Start(dbbe)
 

@@ -11,8 +11,6 @@ import (
 	"os"
 	"regexp"
 	"strings"
-
-	"github.com/google/uuid"
 )
 
 var _ dbbackend.DataStore = &FullDataFile{}
@@ -21,7 +19,6 @@ type FullDataFile struct {
 	URLData  entities.UrlData
 	filename string
 	file     *os.File
-	dec      *json.Decoder
 	enc      *json.Encoder
 }
 
@@ -35,7 +32,7 @@ func NewFullDataFile(filename string) (*FullDataFile, error) {
 		log.Fatalln(err)
 	}
 	fd.enc = json.NewEncoder(fd.file)
-	fd.dec = json.NewDecoder(fd.file)
+
 	return fd, nil
 }
 
@@ -56,42 +53,39 @@ func (fd *FullDataFile) WriteURL(ctx context.Context, url entities.UrlData) (*en
 	}, nil
 }
 
-func (fd *FullDataFile) WriteData(ctx context.Context, id uuid.UUID, data map[string]string) (*entities.UrlData, error) {
-	for {
-		if err := fd.dec.Decode(&fd.URLData); err != nil {
-			if err == io.EOF {
-				log.Println("URL not found")
-				return nil, nil
-			}
-			return nil, err
-		}
-		if id == fd.URLData.Id {
-			fd.URLData.Data = data
-			err := fd.enc.Encode(fd.URLData)
-			if err != nil {
-				//Log it
-				return nil, err
-			}
-			//Process file
-			err = fd.Sort(id)
-			if err != nil {
-				return nil, err
-			}
-
-			return &entities.UrlData{
-				Id:       fd.URLData.Id,
-				FullURL:  fd.URLData.FullURL,
-				ShortURL: fd.URLData.ShortURL,
-				Data:     fd.URLData.Data,
-			}, nil
-		}
+func (fd *FullDataFile) WriteData(ctx context.Context, url entities.UrlData, data map[string]string) (*entities.UrlData, error) {
+	fd.URLData.Data = data
+	err := fd.enc.Encode(fd.URLData)
+	if err != nil {
+		//Log it
+		return nil, err
 	}
+	//Process file
+	err = fd.Sort(url)
+	if err != nil {
+		return nil, err
+	}
+
+	fd.file.Close()
+	return &entities.UrlData{
+		Id:       fd.URLData.Id,
+		FullURL:  fd.URLData.FullURL,
+		ShortURL: fd.URLData.ShortURL,
+		Data:     fd.URLData.Data,
+	}, nil
+
 }
 
 //Reads info from file/DB
 func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
+	var err error
+	fd.file, err = os.OpenFile(fd.filename, os.O_RDONLY, 0666)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	dec := json.NewDecoder(fd.file)
 	for {
-		if err := fd.dec.Decode(&fd.URLData); err != nil {
+		if err := dec.Decode(&fd.URLData); err != nil {
 			if err == io.EOF {
 				log.Println("URL not found")
 				return nil, nil
@@ -100,6 +94,7 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 		}
 
 		if url.FullURL == fd.URLData.FullURL || url.ShortURL == fd.URLData.ShortURL {
+			fd.file.Close()
 			return &entities.UrlData{
 				Id:       fd.URLData.Id,
 				FullURL:  fd.URLData.FullURL,
@@ -116,7 +111,7 @@ func (fd *FullDataFile) Close() {
 	}
 }
 
-func (fd *FullDataFile) Sort(id uuid.UUID) error {
+func (fd *FullDataFile) Sort(url entities.UrlData) error {
 	input, err := ioutil.ReadFile(fd.filename)
 	if err != nil {
 		log.Fatalln(err)
@@ -125,7 +120,7 @@ func (fd *FullDataFile) Sort(id uuid.UUID) error {
 	lines := strings.Split(string(input), "\n")
 
 	for i, line := range lines {
-		if strings.Contains(line, id.String()) {
+		if strings.Contains(line, url.ShortURL) {
 			lines[i] = ""
 			break
 		}

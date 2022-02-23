@@ -33,7 +33,7 @@ package database
 
 // 	url.Id = uuid.New()
 // 	url.FullURL = "//test5.com/"
-// 	url.ShortURL = "bitme.com/" + process.GenerateRandomString()
+// 	url.ShortURL = process.GenerateRandomString()
 
 // 	newurldata, err := fd.WriteURL(ctx, url)
 // 	if err != nil {
@@ -52,13 +52,13 @@ package database
 
 // 	var url entities.UrlData
 
-// 	url.ShortURL = "bitme.com/BpLnfgDsc4"
+// 	url.ShortURL = "BpLnfgDsc4"
 
 // 	urlData, err := fd.ReadURL(ctx, url)
 // 	if err != nil {
 // 		t.Error(err)
 // 	}
-// 	log.Println(urlData)
+// 	log.Println(urlData.Data)
 // }
 
 // func TestWriteData(t *testing.T) {
