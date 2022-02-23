@@ -53,14 +53,13 @@ func (fd *FullDataFile) WriteURL(ctx context.Context, url entities.UrlData) (*en
 	}, nil
 }
 
-func (fd *FullDataFile) WriteData(ctx context.Context, url entities.UrlData, data map[string]string) (*entities.UrlData, error) {
-	fd.URLData.Data = data
-	err := fd.enc.Encode(fd.URLData)
+func (fd *FullDataFile) WriteData(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
+	err := fd.enc.Encode(url)
 	if err != nil {
 		//Log it
 		return nil, err
 	}
-	//Process file
+	//Sort file
 	err = fd.Sort(url)
 	if err != nil {
 		return nil, err

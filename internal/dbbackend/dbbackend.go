@@ -13,7 +13,7 @@ import (
 //Port to use in data storage
 type DataStore interface {
 	WriteURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
-	WriteData(ctx context.Context, url entities.UrlData, data map[string]string) (*entities.UrlData, error)
+	WriteData(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
 	ReadURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
 }
 
@@ -59,8 +59,9 @@ func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) (*en
 		//Log it
 		log.Println(err)
 	}
+	u.Data = m
 
-	newurldata, err := ds.dstore.WriteData(ctx, *u, m)
+	newurldata, err := ds.dstore.WriteData(ctx, *u)
 	if err != nil {
 		//Log it
 		return nil, fmt.Errorf("write data error: %w", err)
