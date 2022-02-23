@@ -19,14 +19,15 @@ components:
 paths:
   /shortenURL:
     post:
-      operationId: SendFullURL
-      parameters:
-        - name: fullURL
-          in: query
-          description: fullURL to shorten
-          required: true
-          schema:
-            type: string
+      operationId: GenShortURL
+      description: Generate short URL
+      requestBody:
+        description: json body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/URLs'
       responses:
         '200':
           description: successful operation
@@ -36,16 +37,19 @@ paths:
                 $ref: "#/components/schemas/URLs"
         '400':
           description: not a URL
+        '500':
+          description: internal server error
   /getData:
     post:
-      operationId: SendShortURL
-      parameters:
-        - name: shortURL
-          in: query
-          description: shortURL to find data
-          required: false #mb needs to be true
-          schema:
-            type: string
+      operationId: GetData
+      description: Get data for sort URL
+      requestBody:
+        description: json body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/URLs'
       responses:
         '200':
           description: successful operation
@@ -55,6 +59,8 @@ paths:
                 $ref: "#/components/schemas/URLs"
         '404':
           description: short URL not found
+        '500':
+          description: internal server error
   /{shortURL}:
     get:
       description: Redirect to FullURL
@@ -73,4 +79,6 @@ paths:
                 schema:
                   $ref: "#/components/schemas/URLs"
         '404':
-          description: data not found
+          description: URL not found
+        '500':
+          description: internal server error

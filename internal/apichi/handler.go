@@ -26,11 +26,11 @@ type ApiUrlData struct {
 	Data     map[string]string `json:"data"`
 }
 
-func (rt *Handlers) RedirectionHandle(ctx context.Context, ud ApiUrlData) (ApiUrlData, error) {
+func (rt *Handlers) RedirectionHandle(ctx context.Context, surl string) (ApiUrlData, error) {
 	//handle redirection to FullUrl here
 	//Update short url data usage
 	bud := entities.UrlData{
-		ShortURL: ud.ShortURL,
+		ShortURL: surl,
 	}
 	newdub, err := rt.ds.WriteData(ctx, bud)
 	if err != nil {

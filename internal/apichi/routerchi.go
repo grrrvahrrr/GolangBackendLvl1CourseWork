@@ -45,10 +45,7 @@ func (ApiUrlData) Render(w http.ResponseWriter, r *http.Request) error {
 func (rt *ChiRouter) Redirection(w http.ResponseWriter, r *http.Request) {
 	surl := chi.URLParam(r, "shortURL")
 
-	ud := ApiUrlData{
-		ShortURL: surl,
-	}
-	nud, err := rt.hs.RedirectionHandle(r.Context(), ud)
+	nud, err := rt.hs.RedirectionHandle(r.Context(), surl)
 	if err != nil {
 		err = render.Render(w, r, ErrRender(err))
 		if err != nil {

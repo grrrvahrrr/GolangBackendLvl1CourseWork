@@ -2,6 +2,7 @@ package main
 
 import (
 	"CourseWork/internal/apichi"
+	"CourseWork/internal/apichi/openapichi"
 	"CourseWork/internal/config"
 	"CourseWork/internal/database"
 	"CourseWork/internal/dbbackend"
@@ -35,7 +36,8 @@ func main() {
 	}
 	dbbe := dbbackend.NewDataStorage(udf)
 	hs := apichi.NewHandlers(dbbe)
-	rt := apichi.NewRouter(hs)
+	//rt := apichi.NewRouter(hs)
+	rt := openapichi.NewOpenApiRouter(hs)
 	srv := server.NewServer(":8000", rt, cfg)
 
 	srv.Start(dbbe)
