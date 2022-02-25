@@ -17,6 +17,24 @@ components:
           type: string
       #some other data in future maybe
 paths:
+  /home:
+    get:
+      operationId: getUserURLs
+      description: Get URLs from USER
+      requestBody:
+        description: json body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/URLs'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: not a URL
+        '500':
+          description: internal server error
   /shortenURL:
     post:
       operationId: GenShortURL
@@ -61,7 +79,7 @@ paths:
           description: short URL not found
         '500':
           description: internal server error
-  /{shortURL}:
+  /su/{shortURL}:
     get:
       description: Redirect to FullURL
       operationId: Redirect

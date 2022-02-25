@@ -54,6 +54,8 @@ func (rt *ChiRouter) Redirection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	http.Redirect(w, r, nud.FullURL, http.StatusMovedPermanently)
+
 	err = render.Render(w, r, nud)
 	if err != nil {
 		log.Println(err)

@@ -3,6 +3,7 @@ package openapichi
 import (
 	"CourseWork/internal/apichi"
 	"encoding/json"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -14,6 +15,11 @@ import (
 type OpenApiChi struct {
 	*chi.Mux
 	hs *apichi.Handlers
+}
+
+type PageVars struct {
+	ShortURL string
+	Data     string
 }
 
 func NewOpenApiRouter(hs *apichi.Handlers) *OpenApiChi {
@@ -68,6 +74,26 @@ func (rt *OpenApiChi) GetData(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 	}
+
+	var s string
+
+	for k, v := range nud.Data {
+		s += k + v + "\n"
+	}
+
+	DataURLVars := PageVars{
+		Data: s,
+	}
+
+	t, err := template.ParseFiles("../internal/frontend/getData.html")
+	if err != nil {
+		log.Print("template parsing error: ", err)
+	}
+	err = t.Execute(w, DataURLVars)
+	if err != nil {
+		log.Print("template executing error: ", err)
+	}
+
 	err = render.Render(w, r, nud)
 	if err != nil {
 		log.Println(err)
@@ -93,6 +119,20 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 	}
+
+	shortenURLVars := PageVars{
+		ShortURL: nud.ShortURL,
+	}
+
+	t, err := template.ParseFiles("../internal/frontend/shortenURL.html")
+	if err != nil {
+		log.Print("template parsing error: ", err)
+	}
+	err = t.Execute(w, shortenURLVars)
+	if err != nil {
+		log.Print("template executing error: ", err)
+	}
+
 	err = render.Render(w, r, nud)
 	if err != nil {
 		log.Println(err)
@@ -100,8 +140,16 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// (GET /{shortURL})
+// (GET /su/{shortURL})
 func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL string) {
+
+	if shortURL == "" {
+		err := render.Render(w, r, apichi.ErrInvalidRequest(http.ErrNotSupported))
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	}
 
 	nud, err := rt.hs.RedirectionHandle(r.Context(), shortURL)
 	if err != nil {
@@ -112,8 +160,24 @@ func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL 
 		return
 	}
 
+	http.Redirect(w, r, nud.FullURL, http.StatusMovedPermanently)
+
 	err = render.Render(w, r, nud)
 	if err != nil {
 		log.Println(err)
+	}
+}
+
+// (GET /home)
+func (rt *OpenApiChi) GetUserURLs(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("../internal/frontend/homepage.html")
+	if err != nil {
+		log.Print("template parsing error: ", err)
+	}
+
+	data := PageVars{}
+	err = t.Execute(w, data)
+	if err != nil {
+		log.Print("template execute error: ", err)
 	}
 }
