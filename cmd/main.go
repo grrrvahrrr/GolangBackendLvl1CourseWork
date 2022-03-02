@@ -30,7 +30,7 @@ func main() {
 		log.Fatal("Error loading config: ", err)
 	}
 
-	udf, err := database.NewFullDataFile("data.log")
+	udf, err := database.NewFullDataFile("shorturl.db", "adminurl.db", "data.db")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -6,8 +6,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-
-	"github.com/google/uuid"
 )
 
 //Port to use in data storage
@@ -34,8 +32,8 @@ func (ds *DataStorage) WriteURL(ctx context.Context, url entities.UrlData) (*ent
 		return nil, fmt.Errorf("validate url error: %w", err)
 	}
 
-	url.Id = uuid.New()
 	url.ShortURL = process.GenerateRandomString()
+	url.AdminURL = process.GenerateRandomString()
 	newurldata, err := ds.dstore.WriteURL(ctx, url)
 	if err != nil {
 		//Log it
@@ -54,12 +52,11 @@ func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) (*en
 	}
 
 	//Process data -- with more functions can be separated into independent function
-	m, err := process.UpdateNumOfUses(u.Data)
+	u.Data, err = process.UpdateNumOfUses(u.Data)
 	if err != nil {
 		//Log it
 		log.Println(err)
 	}
-	u.Data = m
 
 	newurldata, err := ds.dstore.WriteData(ctx, *u)
 	if err != nil {

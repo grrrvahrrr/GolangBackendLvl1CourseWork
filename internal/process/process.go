@@ -27,18 +27,14 @@ func ValidateURL(fullURL string) error {
 
 //Update neccessary data to send it to DB
 //UpdateNumOfUses here, in future different functions for new elements of data
-func UpdateNumOfUses(data map[string]string) (map[string]string, error) {
-	v, ok := data["NumOfUses"]
-	if !ok {
-		data["NumOfUses"] = "1"
-	} else {
-		iv, err := strconv.Atoi(v)
-		if err != nil {
-			//Log it with logrus
-			log.Println(err)
-		}
-		iv++
-		data["NumOfUses"] = strconv.Itoa(iv)
+func UpdateNumOfUses(data string) (string, error) {
+	iv, err := strconv.Atoi(data)
+	if err != nil {
+		//Log it with logrus
+		log.Println(err)
 	}
+	iv++
+	data = strconv.Itoa(iv)
+
 	return data, nil
 }

@@ -11,6 +11,8 @@ components:
       properties:
         fullURL:
           type: string
+        adminURL:
+          type: string
         shortURL:
           type: string
         data:
@@ -18,8 +20,8 @@ components:
       #some other data in future maybe
 paths:
   /home:
-    get:
-      operationId: getUserURLs
+     get:
+      operationId: getUserFullURL
       description: Get URLs from USER
       requestBody:
         description: json body
@@ -43,7 +45,7 @@ paths:
         description: json body
         required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/URLs'
       responses:
@@ -57,17 +59,16 @@ paths:
           description: not a URL
         '500':
           description: internal server error
-  /getData:
-    post:
-      operationId: GetData
-      description: Get data for sort URL
-      requestBody:
-        description: json body
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/URLs'
+  /getData/{adminURL}:
+    get:
+      description: Redirect to Data
+      operationId: AdminRedirect
+      parameters:
+        - name: adminURL
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: successful operation
@@ -76,7 +77,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/URLs"
         '404':
-          description: short URL not found
+          description: admin URL not found
         '500':
           description: internal server error
   /su/{shortURL}:

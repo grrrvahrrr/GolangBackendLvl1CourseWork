@@ -20,37 +20,26 @@ import (
 
 // URLs defines model for URLs.
 type URLs struct {
+	AdminURL *string `json:"adminURL,omitempty"`
 	Data     *string `json:"data,omitempty"`
 	FullURL  *string `json:"fullURL,omitempty"`
 	ShortURL *string `json:"shortURL,omitempty"`
 }
 
-// GetDataJSONBody defines parameters for GetData.
-type GetDataJSONBody URLs
+// GetUserFullURLJSONBody defines parameters for GetUserFullURL.
+type GetUserFullURLJSONBody URLs
 
-// GetUserURLsJSONBody defines parameters for GetUserURLs.
-type GetUserURLsJSONBody URLs
-
-// GenShortURLJSONBody defines parameters for GenShortURL.
-type GenShortURLJSONBody URLs
-
-// GetDataJSONRequestBody defines body for GetData for application/json ContentType.
-type GetDataJSONRequestBody GetDataJSONBody
-
-// GetUserURLsJSONRequestBody defines body for GetUserURLs for application/json ContentType.
-type GetUserURLsJSONRequestBody GetUserURLsJSONBody
-
-// GenShortURLJSONRequestBody defines body for GenShortURL for application/json ContentType.
-type GenShortURLJSONRequestBody GenShortURLJSONBody
+// GetUserFullURLJSONRequestBody defines body for GetUserFullURL for application/json ContentType.
+type GetUserFullURLJSONRequestBody GetUserFullURLJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
-	// (POST /getData)
-	GetData(w http.ResponseWriter, r *http.Request)
+	// (GET /getData/{adminURL})
+	AdminRedirect(w http.ResponseWriter, r *http.Request, adminURL string)
 
 	// (GET /home)
-	GetUserURLs(w http.ResponseWriter, r *http.Request)
+	GetUserFullURL(w http.ResponseWriter, r *http.Request)
 
 	// (POST /shortenURL)
 	GenShortURL(w http.ResponseWriter, r *http.Request)
@@ -68,12 +57,23 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.HandlerFunc) http.HandlerFunc
 
-// GetData operation middleware
-func (siw *ServerInterfaceWrapper) GetData(w http.ResponseWriter, r *http.Request) {
+// AdminRedirect operation middleware
+func (siw *ServerInterfaceWrapper) AdminRedirect(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	var err error
+
+	// ------------- Path parameter "adminURL" -------------
+	var adminURL string
+
+	err = runtime.BindStyledParameter("simple", false, "adminURL", chi.URLParam(r, "adminURL"), &adminURL)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "adminURL", Err: err})
+		return
+	}
+
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetData(w, r)
+		siw.Handler.AdminRedirect(w, r, adminURL)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -83,12 +83,12 @@ func (siw *ServerInterfaceWrapper) GetData(w http.ResponseWriter, r *http.Reques
 	handler(w, r.WithContext(ctx))
 }
 
-// GetUserURLs operation middleware
-func (siw *ServerInterfaceWrapper) GetUserURLs(w http.ResponseWriter, r *http.Request) {
+// GetUserFullURL operation middleware
+func (siw *ServerInterfaceWrapper) GetUserFullURL(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var handler = func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetUserURLs(w, r)
+		siw.Handler.GetUserFullURL(w, r)
 	}
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -253,10 +253,10 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/getData", wrapper.GetData)
+		r.Get(options.BaseURL+"/getData/{adminURL}", wrapper.AdminRedirect)
 	})
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/home", wrapper.GetUserURLs)
+		r.Get(options.BaseURL+"/home", wrapper.GetUserFullURL)
 	})
 	r.Group(func(r chi.Router) {
 		r.Post(options.BaseURL+"/shortenURL", wrapper.GenShortURL)
@@ -271,15 +271,15 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xVTW/bMAz9KwK3oxGlXXfxsdgHBmSXFDkNPag2naiwJY2kAxSB//tAOW7WzgGGDRt6",
-	"6MkOST0+vRfSB6hil2LAIAzlAbjaYefy62a9ys9EMSGJx/yrduL0KQ8JoQQW8mELQwFN37ab9Wo2x7tI",
-	"Mp8ciikS7+6xEhg05EMTc7GXVnPXXr6i2axXJkNhQIIC9kjsY4ASLhZL7RMTBpc8lPBusVxcQgHJyS7z",
-	"tluUD0fuKbLkuyBX5JOMGJ9RjN7ONJEMRxLtBxmUnNZ8qceqDFMA4fceWa5j/aBgVQyCIeO6lFpf5TP2",
-	"nhV8Elbf3hI2UMIbe1LeHmW3WfOswFNuimLutNPY1xPWUAr1OGiAUww8+nO5XP5zNtxXFTI3fWsexVH5",
-	"r5ZXv8qaDcvWhSimiX2otfb9yPNprQ+CFFxrGGmPZJAokjIYCrC72KEe2eIZ85SuaSh2ZnPzcT3n3IaR",
-	"8qVeuHu/K/dMsYrs8j/3j0Q+jtdxVs8NSlAWaB6tndE63Ewz/zop/8m63h6mRTucHZQ11p6wEiPRfDqu",
-	"7OfuTTV5f5LrUJAYym8H8AqhOxUKCK7Dab5PPp/0Ln7S7vnSv33pW+tv95V+9HJs1K2nFkrYiSQurXXJ",
-	"L8bsQpDF7i9guB1+BAAA//8qKgvCiwcAAA==",
+	"H4sIAAAAAAAC/9yVTW/bPAzHv4rA5zk6Udp1F99WbCsGZJcUOQ09qDadqLAljaKTFYa/+0A5bpfWBbIN",
+	"3YCd5Ig0X35/k+mg8E3wDh1HyDuIxRYbkx7Xq2U6A/mAxBbTL1M21q1XS3nm+4CQQ2SybgN9BqVhM2mo",
+	"2rp+6aW49cTTxj4bb/ztHRYMvVxZV/nkbLkW26Xlz6jWq6VKodAhQQY7pGi9gxzO5gvJ4wM6Eyzk8Ga+",
+	"mJ9DBsHwNjWlN8jvDRvdje31cr1BlqPEWJANPERbYWkJC1bslbwDKTIZMX8qIYd3EmL0SlnINMhIEfIv",
+	"HVgJIpkhA2caaeCBaQaEX1tLWELO1GJ20GMKzY04x+BdHIQ5XyzkKLxjdKluE0Jti1SYvotSfPdDvP8J",
+	"K8jhP/34AeiD+jpJn1gf9x7bosAYq7ZWDz0L2ovFxXNQqaski/OsKt+6UnzfDnUe+1rHSM7UKiLtkBQS",
+	"eZIK+gz01gulF+S4QpYcUVXkG7W+/rB6JsgV8joifTx8gwNkjHzpy/tXRyZR1K1keipuPy3gqcQnnIWz",
+	"ERq/xvkwPYdRDD5O4nZSBQ6jpgaeT3G763GkT2X9bbbf72eVp2bWUo2u8KVg+uPw/9L0vIKWre7GxXra",
+	"Lnscj2M5f2qTxWPh/5FN9rs7TP7k0t3AraUactgyh5hrbYKdD9Y5Y2S9O4P+pv8eAAD//79aPc+YBwAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

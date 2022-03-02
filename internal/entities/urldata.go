@@ -1,10 +1,8 @@
 package entities
 
-import "github.com/google/uuid"
-
 type UrlData struct {
-	Id       uuid.UUID         `json:"id"`
-	FullURL  string            `json:"fullurl"`
-	ShortURL string            `json:"shorturl"`
-	Data     map[string]string `json:"data"`
+	FullURL  string `json:"fullurl"`
+	ShortURL string `json:"shorturl"`
+	AdminURL string `json:"adminurl"`
+	Data     string `json:"data"`
 }

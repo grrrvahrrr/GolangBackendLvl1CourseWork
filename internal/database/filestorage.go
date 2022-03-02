@@ -4,34 +4,40 @@ import (
 	"CourseWork/internal/dbbackend"
 	"CourseWork/internal/entities"
 	"context"
-	"encoding/json"
-	"io"
-	"io/ioutil"
 	"log"
-	"os"
-	"regexp"
-	"strings"
+
+	"github.com/syndtr/goleveldb/leveldb"
 )
 
 var _ dbbackend.DataStore = &FullDataFile{}
 
 type FullDataFile struct {
-	URLData  entities.UrlData
-	filename string
-	file     *os.File
-	enc      *json.Encoder
+	URLData    entities.UrlData
+	shorturldb *leveldb.DB
+	adminurldb *leveldb.DB
+	datadb     *leveldb.DB
 }
 
-func NewFullDataFile(filename string) (*FullDataFile, error) {
+func NewFullDataFile(shorturldbfn string, adminurldbfn string, datadbfn string) (*FullDataFile, error) {
 	var err error
-	fd := &FullDataFile{
-		filename: filename,
-	}
-	fd.file, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	shorturldb, err := leveldb.OpenFile(shorturldbfn, nil)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
-	fd.enc = json.NewEncoder(fd.file)
+	adminurldb, err := leveldb.OpenFile(adminurldbfn, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	datadb, err := leveldb.OpenFile(datadbfn, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fd := &FullDataFile{
+		shorturldb: shorturldb,
+		adminurldb: adminurldb,
+		datadb:     datadb,
+	}
 
 	return fd, nil
 }
@@ -39,101 +45,88 @@ func NewFullDataFile(filename string) (*FullDataFile, error) {
 //Writing to a file/db what we got from Backend after validating URLs and Updating Data
 func (fd *FullDataFile) WriteURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
 	fd.URLData = url
-	err := fd.enc.Encode(fd.URLData)
+	err := fd.shorturldb.Put([]byte(url.ShortURL), []byte(url.FullURL), nil)
 	if err != nil {
-		//Log it
-		log.Println("err")
+		log.Println(err)
 		return nil, err
 	}
+	err = fd.adminurldb.Put([]byte(url.AdminURL), []byte(url.ShortURL), nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	fd.URLData.Data = "0"
+	err = fd.datadb.Put([]byte(url.ShortURL), []byte(fd.URLData.Data), nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
 	return &entities.UrlData{
-		Id:       fd.URLData.Id,
 		FullURL:  fd.URLData.FullURL,
 		ShortURL: fd.URLData.ShortURL,
+		AdminURL: fd.URLData.AdminURL,
 		Data:     fd.URLData.Data,
 	}, nil
 }
 
 func (fd *FullDataFile) WriteData(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
-	err := fd.enc.Encode(url)
+	err := fd.datadb.Put([]byte(url.ShortURL), []byte(url.Data), nil)
 	if err != nil {
-		//Log it
-		return nil, err
-	}
-	//Sort file
-	err = fd.Sort(url)
-	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
-	fd.file.Close()
+	return &url, nil
+}
+
+//Reads info from file/DB
+func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
+
+	if url.AdminURL != "" {
+		fd.URLData.AdminURL = url.AdminURL
+		data, err := fd.adminurldb.Get([]byte(fd.URLData.AdminURL), nil)
+		fd.URLData.ShortURL = string(data)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+	} else if url.ShortURL != "" {
+		fd.URLData.ShortURL = url.ShortURL
+	} else {
+		//Change that with error handling!
+		log.Println("Couldn't find URL in DB")
+		return nil, nil
+	}
+
+	data, err := fd.shorturldb.Get([]byte(fd.URLData.ShortURL), nil)
+	fd.URLData.FullURL = string(data)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	data, err = fd.datadb.Get([]byte(fd.URLData.ShortURL), nil)
+	fd.URLData.Data = string(data)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
 	return &entities.UrlData{
-		Id:       fd.URLData.Id,
 		FullURL:  fd.URLData.FullURL,
 		ShortURL: fd.URLData.ShortURL,
+		AdminURL: fd.URLData.AdminURL,
 		Data:     fd.URLData.Data,
 	}, nil
 
 }
 
-//Reads info from file/DB
-func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
-	var err error
-	fd.file, err = os.OpenFile(fd.filename, os.O_RDONLY, 0666)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	dec := json.NewDecoder(fd.file)
-	for {
-		if err := dec.Decode(&fd.URLData); err != nil {
-			if err == io.EOF {
-				log.Println("URL not found")
-				return nil, nil
-			}
-			return nil, err
-		}
-
-		if url.FullURL == fd.URLData.FullURL || url.ShortURL == fd.URLData.ShortURL {
-			fd.file.Close()
-			return &entities.UrlData{
-				Id:       fd.URLData.Id,
-				FullURL:  fd.URLData.FullURL,
-				ShortURL: fd.URLData.ShortURL,
-				Data:     fd.URLData.Data,
-			}, nil
-		}
-	}
-}
-
 func (fd *FullDataFile) Close() {
-	if fd.file != nil {
-		fd.file.Close()
-	}
-}
+	//Add check
+	fd.shorturldb.Close()
+	fd.adminurldb.Close()
+	fd.datadb.Close()
 
-func (fd *FullDataFile) Sort(url entities.UrlData) error {
-	input, err := ioutil.ReadFile(fd.filename)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	lines := strings.Split(string(input), "\n")
-
-	for i, line := range lines {
-		if strings.Contains(line, url.ShortURL) {
-			lines[i] = ""
-			break
-		}
-	}
-	output := strings.Join(lines, "\n")
-	regex, err := regexp.Compile("\n\n")
-	if err != nil {
-		return err
-	}
-	output = regex.ReplaceAllString(output, "\n")
-
-	err = ioutil.WriteFile(fd.filename, []byte(output), 0644)
-	if err != nil {
-		return err
-	}
-	return nil
 }

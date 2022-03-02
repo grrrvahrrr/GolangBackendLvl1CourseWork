@@ -19,6 +19,8 @@ type OpenApiChi struct {
 
 type PageVars struct {
 	ShortURL string
+	AdminURL string
+	FullURL  string
 	Data     string
 }
 
@@ -56,17 +58,12 @@ func (UrlData) Render(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// (POST /getData)
-func (rt *OpenApiChi) GetData(w http.ResponseWriter, r *http.Request) {
-	urldata := UrlData{}
-	if err := render.Bind(r, &urldata); err != nil {
-		//Fix errors!
-		err = render.Render(w, r, apichi.ErrInvalidRequest(err))
-		if err != nil {
-			log.Println(err)
-		}
-		return
+// (GET /getData/{adminURL})
+func (rt *OpenApiChi) AdminRedirect(w http.ResponseWriter, r *http.Request, adminURL string) {
+	urldata := UrlData{
+		AdminURL: adminURL,
 	}
+
 	nud, err := rt.hs.GetDataHandle(r.Context(), apichi.ApiUrlData(urldata))
 	if err != nil {
 		err = render.Render(w, r, apichi.ErrRender(err))
@@ -75,14 +72,9 @@ func (rt *OpenApiChi) GetData(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var s string
-
-	for k, v := range nud.Data {
-		s += k + v + "\n"
-	}
-
 	DataURLVars := PageVars{
-		Data: s,
+		Data:     nud.Data,
+		ShortURL: nud.ShortURL,
 	}
 
 	t, err := template.ParseFiles("../internal/frontend/getData.html")
@@ -94,24 +86,27 @@ func (rt *OpenApiChi) GetData(w http.ResponseWriter, r *http.Request) {
 		log.Print("template executing error: ", err)
 	}
 
-	err = render.Render(w, r, nud)
-	if err != nil {
-		log.Println(err)
-	}
-
 }
 
 // (POST /shortenURL)
 func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
-	urldata := UrlData{}
-	if err := render.Bind(r, &urldata); err != nil {
-		//Fix errors!
-		err = render.Render(w, r, apichi.ErrInvalidRequest(err))
-		if err != nil {
-			log.Println(err)
-		}
+
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("error parsing form")
 		return
 	}
+
+	fullurl := r.Form.Get("fullurl")
+	if fullurl == "" {
+		log.Println("Search query not found!")
+		return
+	}
+
+	urldata := UrlData{
+		FullURL: fullurl,
+	}
+
 	nud, err := rt.hs.GenShortUrlHandle(r.Context(), apichi.ApiUrlData(urldata))
 	if err != nil {
 		err = render.Render(w, r, apichi.ErrRender(err))
@@ -122,6 +117,8 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 
 	shortenURLVars := PageVars{
 		ShortURL: nud.ShortURL,
+		AdminURL: nud.AdminURL,
+		FullURL:  nud.FullURL,
 	}
 
 	t, err := template.ParseFiles("../internal/frontend/shortenURL.html")
@@ -131,11 +128,6 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 	err = t.Execute(w, shortenURLVars)
 	if err != nil {
 		log.Print("template executing error: ", err)
-	}
-
-	err = render.Render(w, r, nud)
-	if err != nil {
-		log.Println(err)
 	}
 
 }
@@ -160,24 +152,20 @@ func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL 
 		return
 	}
 
-	http.Redirect(w, r, nud.FullURL, http.StatusMovedPermanently)
+	http.Redirect(w, r, nud.FullURL, http.StatusSeeOther)
 
-	err = render.Render(w, r, nud)
-	if err != nil {
-		log.Println(err)
-	}
 }
 
 // (GET /home)
-func (rt *OpenApiChi) GetUserURLs(w http.ResponseWriter, r *http.Request) {
+func (rt *OpenApiChi) GetUserFullURL(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("../internal/frontend/homepage.html")
 	if err != nil {
 		log.Print("template parsing error: ", err)
 	}
 
-	data := PageVars{}
-	err = t.Execute(w, data)
+	err = t.Execute(w, nil)
 	if err != nil {
 		log.Print("template execute error: ", err)
 	}
+
 }

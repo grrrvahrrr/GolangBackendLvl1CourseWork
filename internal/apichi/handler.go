@@ -5,8 +5,6 @@ import (
 	"CourseWork/internal/entities"
 	"context"
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 type Handlers struct {
@@ -20,10 +18,10 @@ func NewHandlers(ds *dbbackend.DataStorage) *Handlers {
 }
 
 type ApiUrlData struct {
-	Id       uuid.UUID         `json:"id"`
-	FullURL  string            `json:"fullurl"`
-	ShortURL string            `json:"shorturl"`
-	Data     map[string]string `json:"data"`
+	FullURL  string `json:"fullurl"`
+	ShortURL string `json:"shorturl"`
+	AdminURL string `json:"adminurl"`
+	Data     string `json:"data"`
 }
 
 func (rt *Handlers) RedirectionHandle(ctx context.Context, surl string) (ApiUrlData, error) {
@@ -37,7 +35,6 @@ func (rt *Handlers) RedirectionHandle(ctx context.Context, surl string) (ApiUrlD
 		return ApiUrlData{}, fmt.Errorf("error when creating: %w", err)
 	}
 	return ApiUrlData{
-		Id:       newdub.Id,
 		FullURL:  newdub.FullURL,
 		ShortURL: newdub.ShortURL,
 		Data:     newdub.Data,
@@ -48,7 +45,7 @@ func (rt *Handlers) RedirectionHandle(ctx context.Context, surl string) (ApiUrlD
 func (rt *Handlers) GetDataHandle(ctx context.Context, ud ApiUrlData) (ApiUrlData, error) {
 	//Handle request to get Data for ShortURL
 	bud := entities.UrlData{
-		ShortURL: ud.ShortURL,
+		AdminURL: ud.AdminURL,
 	}
 	newdub, err := rt.ds.ReadURL(ctx, bud)
 	if err != nil {
