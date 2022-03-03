@@ -13,6 +13,7 @@ type DataStore interface {
 	WriteURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
 	WriteData(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
 	ReadURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error)
+	GetIPData(ctx context.Context, url entities.UrlData) (string, error)
 }
 
 type DataStorage struct {
@@ -45,6 +46,7 @@ func (ds *DataStorage) WriteURL(ctx context.Context, url entities.UrlData) (*ent
 
 func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
 	var err error
+
 	u, err := ds.dstore.ReadURL(ctx, url)
 	if err != nil {
 		//Log it
@@ -53,6 +55,12 @@ func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) (*en
 
 	//Process data -- with more functions can be separated into independent function
 	u.Data, err = process.UpdateNumOfUses(u.Data)
+	if err != nil {
+		//Log it
+		log.Println(err)
+	}
+
+	u.IPData, err = process.UpdateNumOfUses(u.IPData)
 	if err != nil {
 		//Log it
 		log.Println(err)
@@ -75,4 +83,13 @@ func (ds *DataStorage) ReadURL(ctx context.Context, url entities.UrlData) (*enti
 		return nil, fmt.Errorf("read data error: %w", err)
 	}
 	return u, nil
+}
+
+func (ds *DataStorage) GetIPData(ctx context.Context, url entities.UrlData) (string, error) {
+	s, err := ds.dstore.GetIPData(ctx, url)
+	if err != nil {
+		//Log it
+		return "", fmt.Errorf("read data error: %w", err)
+	}
+	return s, nil
 }

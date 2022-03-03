@@ -5,4 +5,6 @@ type UrlData struct {
 	ShortURL string `json:"shorturl"`
 	AdminURL string `json:"adminurl"`
 	Data     string `json:"data"`
+	IP       string `json:"ip"`
+	IPData   string `json:"ipdata"`
 }

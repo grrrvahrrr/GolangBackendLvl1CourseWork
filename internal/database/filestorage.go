@@ -5,8 +5,10 @@ import (
 	"CourseWork/internal/entities"
 	"context"
 	"log"
+	"strings"
 
 	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/syndtr/goleveldb/leveldb/util"
 )
 
 var _ dbbackend.DataStore = &FullDataFile{}
@@ -16,9 +18,10 @@ type FullDataFile struct {
 	shorturldb *leveldb.DB
 	adminurldb *leveldb.DB
 	datadb     *leveldb.DB
+	ipdb       *leveldb.DB
 }
 
-func NewFullDataFile(shorturldbfn string, adminurldbfn string, datadbfn string) (*FullDataFile, error) {
+func NewFullDataFile(shorturldbfn string, adminurldbfn string, datadbfn string, ipdbfn string) (*FullDataFile, error) {
 	var err error
 	shorturldb, err := leveldb.OpenFile(shorturldbfn, nil)
 	if err != nil {
@@ -33,10 +36,16 @@ func NewFullDataFile(shorturldbfn string, adminurldbfn string, datadbfn string) 
 		log.Fatal(err)
 	}
 
+	ipdb, err := leveldb.OpenFile(ipdbfn, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fd := &FullDataFile{
 		shorturldb: shorturldb,
 		adminurldb: adminurldb,
 		datadb:     datadb,
+		ipdb:       ipdb,
 	}
 
 	return fd, nil
@@ -78,6 +87,14 @@ func (fd *FullDataFile) WriteData(ctx context.Context, url entities.UrlData) (*e
 		return nil, err
 	}
 
+	d := strings.Join([]string{fd.URLData.ShortURL, fd.URLData.IP}, ":")
+
+	err = fd.ipdb.Put([]byte(d), []byte(url.IPData), nil)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
 	return &url, nil
 }
 
@@ -94,6 +111,7 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 		}
 	} else if url.ShortURL != "" {
 		fd.URLData.ShortURL = url.ShortURL
+		fd.URLData.IP = url.IP
 	} else {
 		//Change that with error handling!
 		log.Println("Couldn't find URL in DB")
@@ -114,13 +132,45 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 		return nil, err
 	}
 
+	d := strings.Join([]string{fd.URLData.ShortURL, fd.URLData.IP}, ":")
+
+	ipdata, err := fd.ipdb.Get([]byte(d), nil)
+	if err != nil && err != leveldb.ErrNotFound {
+		log.Println(err)
+		return nil, err
+	} else if err == leveldb.ErrNotFound {
+		fd.URLData.IPData = "0"
+	} else {
+		fd.URLData.IPData = string(ipdata)
+	}
+
 	return &entities.UrlData{
 		FullURL:  fd.URLData.FullURL,
 		ShortURL: fd.URLData.ShortURL,
 		AdminURL: fd.URLData.AdminURL,
 		Data:     fd.URLData.Data,
+		IP:       fd.URLData.IP,
+		IPData:   fd.URLData.IPData,
 	}, nil
 
+}
+
+func (fd *FullDataFile) GetIPData(ctx context.Context, url entities.UrlData) (string, error) {
+	var ipdata string
+	iter := fd.ipdb.NewIterator(util.BytesPrefix([]byte(fd.URLData.ShortURL)), nil)
+	for iter.Next() {
+		key := iter.Key()
+		value := iter.Value()
+
+		ipdata += "IP: " + strings.TrimLeft(string(key), fd.URLData.ShortURL) + " # Redirects: " + string(value) + "\n"
+	}
+	iter.Release()
+	err := iter.Error()
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	return ipdata, nil
 }
 
 func (fd *FullDataFile) Close() {

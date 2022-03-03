@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"html/template"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -22,6 +23,7 @@ type PageVars struct {
 	AdminURL string
 	FullURL  string
 	Data     string
+	IPData   string
 }
 
 func NewOpenApiRouter(hs *apichi.Handlers) *OpenApiChi {
@@ -64,7 +66,7 @@ func (rt *OpenApiChi) AdminRedirect(w http.ResponseWriter, r *http.Request, admi
 		AdminURL: adminURL,
 	}
 
-	nud, err := rt.hs.GetDataHandle(r.Context(), apichi.ApiUrlData(urldata))
+	nud, ipdata, err := rt.hs.GetDataHandle(r.Context(), apichi.ApiUrlData(urldata))
 	if err != nil {
 		err = render.Render(w, r, apichi.ErrRender(err))
 		if err != nil {
@@ -75,6 +77,7 @@ func (rt *OpenApiChi) AdminRedirect(w http.ResponseWriter, r *http.Request, admi
 	DataURLVars := PageVars{
 		Data:     nud.Data,
 		ShortURL: nud.ShortURL,
+		IPData:   ipdata,
 	}
 
 	t, err := template.ParseFiles("../internal/frontend/getData.html")
@@ -143,7 +146,13 @@ func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL 
 		return
 	}
 
-	nud, err := rt.hs.RedirectionHandle(r.Context(), shortURL)
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	nud, err := rt.hs.RedirectionHandle(r.Context(), shortURL, ip)
 	if err != nil {
 		err = render.Render(w, r, apichi.ErrRender(err))
 		if err != nil {
