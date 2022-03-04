@@ -4,7 +4,7 @@ import (
 	"CourseWork/internal/dbbackend"
 	"CourseWork/internal/entities"
 	"context"
-	"log"
+	"fmt"
 	"strings"
 
 	"github.com/syndtr/goleveldb/leveldb"
@@ -25,20 +25,20 @@ func NewFullDataFile(shorturldbfn string, adminurldbfn string, datadbfn string, 
 	var err error
 	shorturldb, err := leveldb.OpenFile(shorturldbfn, nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	adminurldb, err := leveldb.OpenFile(adminurldbfn, nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	datadb, err := leveldb.OpenFile(datadbfn, nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	ipdb, err := leveldb.OpenFile(ipdbfn, nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	fd := &FullDataFile{
@@ -56,20 +56,17 @@ func (fd *FullDataFile) WriteURL(ctx context.Context, url entities.UrlData) (*en
 	fd.URLData = url
 	err := fd.shorturldb.Put([]byte(url.ShortURL), []byte(url.FullURL), nil)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error writing to shorturldb : %w", err)
 	}
 	err = fd.adminurldb.Put([]byte(url.AdminURL), []byte(url.ShortURL), nil)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error writing to adminurldb : %w", err)
 	}
 
 	fd.URLData.Data = "0"
 	err = fd.datadb.Put([]byte(url.ShortURL), []byte(fd.URLData.Data), nil)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error writing to datadb : %w", err)
 	}
 
 	return &entities.UrlData{
@@ -83,16 +80,14 @@ func (fd *FullDataFile) WriteURL(ctx context.Context, url entities.UrlData) (*en
 func (fd *FullDataFile) WriteData(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
 	err := fd.datadb.Put([]byte(url.ShortURL), []byte(url.Data), nil)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error writing to datadb : %w", err)
 	}
 
 	d := strings.Join([]string{fd.URLData.ShortURL, fd.URLData.IP}, ":")
 
 	err = fd.ipdb.Put([]byte(d), []byte(url.IPData), nil)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error writing to ipdb : %w", err)
 	}
 
 	return &url, nil
@@ -106,38 +101,32 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 		data, err := fd.adminurldb.Get([]byte(fd.URLData.AdminURL), nil)
 		fd.URLData.ShortURL = string(data)
 		if err != nil {
-			log.Println(err)
-			return nil, err
+			return nil, fmt.Errorf("error reading adminurldb : %w", err)
 		}
 	} else if url.ShortURL != "" {
 		fd.URLData.ShortURL = url.ShortURL
 		fd.URLData.IP = url.IP
 	} else {
-		//Change that with error handling!
-		log.Println("Couldn't find URL in DB")
-		return nil, nil
+		return nil, fmt.Errorf("recieved empty struct, no key to find")
 	}
 
 	data, err := fd.shorturldb.Get([]byte(fd.URLData.ShortURL), nil)
 	fd.URLData.FullURL = string(data)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error reading shorturldb : %w", err)
 	}
 
 	data, err = fd.datadb.Get([]byte(fd.URLData.ShortURL), nil)
 	fd.URLData.Data = string(data)
 	if err != nil {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error reading datadb : %w", err)
 	}
 
 	d := strings.Join([]string{fd.URLData.ShortURL, fd.URLData.IP}, ":")
 
 	ipdata, err := fd.ipdb.Get([]byte(d), nil)
 	if err != nil && err != leveldb.ErrNotFound {
-		log.Println(err)
-		return nil, err
+		return nil, fmt.Errorf("error reading ipdb : %w", err)
 	} else if err == leveldb.ErrNotFound {
 		fd.URLData.IPData = "0"
 	} else {
@@ -167,8 +156,7 @@ func (fd *FullDataFile) GetIPData(ctx context.Context, url entities.UrlData) (st
 	iter.Release()
 	err := iter.Error()
 	if err != nil {
-		log.Println(err)
-		return "", err
+		return "", fmt.Errorf("error iterrating over ipdb : %w", err)
 	}
 	return ipdata, nil
 }

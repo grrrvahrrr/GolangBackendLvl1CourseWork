@@ -5,7 +5,8 @@ import (
 	"CourseWork/internal/process"
 	"context"
 	"fmt"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 //Port to use in data storage
@@ -37,8 +38,7 @@ func (ds *DataStorage) WriteURL(ctx context.Context, url entities.UrlData) (*ent
 	url.AdminURL = process.GenerateRandomString()
 	newurldata, err := ds.dstore.WriteURL(ctx, url)
 	if err != nil {
-		//Log it
-		return nil, fmt.Errorf("write url error: %w", err)
+		return nil, err
 	}
 
 	return newurldata, nil
@@ -49,27 +49,23 @@ func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) (*en
 
 	u, err := ds.dstore.ReadURL(ctx, url)
 	if err != nil {
-		//Log it
-		return nil, fmt.Errorf("read data error: %w", err)
+		return nil, err
 	}
 
 	//Process data -- with more functions can be separated into independent function
 	u.Data, err = process.UpdateNumOfUses(u.Data)
 	if err != nil {
-		//Log it
-		log.Println(err)
+		log.Error(err)
 	}
 
 	u.IPData, err = process.UpdateNumOfUses(u.IPData)
 	if err != nil {
-		//Log it
-		log.Println(err)
+		log.Error(err)
 	}
 
 	newurldata, err := ds.dstore.WriteData(ctx, *u)
 	if err != nil {
-		//Log it
-		return nil, fmt.Errorf("write data error: %w", err)
+		return nil, err
 	}
 
 	return newurldata, nil
@@ -79,8 +75,7 @@ func (ds *DataStorage) WriteData(ctx context.Context, url entities.UrlData) (*en
 func (ds *DataStorage) ReadURL(ctx context.Context, url entities.UrlData) (*entities.UrlData, error) {
 	u, err := ds.dstore.ReadURL(ctx, url)
 	if err != nil {
-		//Log it
-		return nil, fmt.Errorf("read data error: %w", err)
+		return nil, err
 	}
 	return u, nil
 }
@@ -88,8 +83,7 @@ func (ds *DataStorage) ReadURL(ctx context.Context, url entities.UrlData) (*enti
 func (ds *DataStorage) GetIPData(ctx context.Context, url entities.UrlData) (string, error) {
 	s, err := ds.dstore.GetIPData(ctx, url)
 	if err != nil {
-		//Log it
-		return "", fmt.Errorf("read data error: %w", err)
+		return "", err
 	}
 	return s, nil
 }

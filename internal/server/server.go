@@ -4,9 +4,10 @@ import (
 	"CourseWork/internal/config"
 	"CourseWork/internal/dbbackend"
 	"context"
-	"log"
 	"net/http"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Server struct {
@@ -32,20 +33,17 @@ func (s *Server) Stop() {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	err := s.srv.Shutdown(ctx)
 	if err != nil {
-		//Log it
-		log.Println(err)
+		log.Error(err)
 	}
 	cancel()
 }
 
 func (s *Server) Start(ds *dbbackend.DataStorage) {
 	s.ds = ds
-	// TODO: migrations
 	go func() {
 		err := s.srv.ListenAndServe()
 		if err != nil {
-			//Log it
-			log.Println(err)
+			log.Fatal(err)
 		}
 	}()
 }

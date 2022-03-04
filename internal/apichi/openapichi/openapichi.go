@@ -3,10 +3,12 @@ package openapichi
 import (
 	"CourseWork/internal/apichi"
 	"encoding/json"
+	"errors"
 	"html/template"
-	"log"
 	"net"
 	"net/http"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -68,9 +70,10 @@ func (rt *OpenApiChi) AdminRedirect(w http.ResponseWriter, r *http.Request, admi
 
 	nud, ipdata, err := rt.hs.GetDataHandle(r.Context(), apichi.ApiUrlData(urldata))
 	if err != nil {
-		err = render.Render(w, r, apichi.ErrRender(err))
+		log.Error(errors.Unwrap(err))
+		err = render.Render(w, r, apichi.ErrRender(errors.Unwrap(err)))
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 		}
 	}
 
@@ -82,11 +85,11 @@ func (rt *OpenApiChi) AdminRedirect(w http.ResponseWriter, r *http.Request, admi
 
 	t, err := template.ParseFiles("../internal/frontend/getData.html")
 	if err != nil {
-		log.Print("template parsing error: ", err)
+		log.Error("template parsing error: ", err)
 	}
 	err = t.Execute(w, DataURLVars)
 	if err != nil {
-		log.Print("template executing error: ", err)
+		log.Error("template executing error: ", err)
 	}
 
 }
@@ -96,14 +99,12 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("error parsing form")
-		return
+		log.Error("error parsing form:", err)
 	}
 
 	fullurl := r.Form.Get("fullurl")
 	if fullurl == "" {
-		log.Println("Search query not found!")
-		return
+		log.Error("search query not found:", err)
 	}
 
 	urldata := UrlData{
@@ -112,9 +113,10 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 
 	nud, err := rt.hs.GenShortUrlHandle(r.Context(), apichi.ApiUrlData(urldata))
 	if err != nil {
-		err = render.Render(w, r, apichi.ErrRender(err))
+		log.Error(errors.Unwrap(err))
+		err = render.Render(w, r, apichi.ErrRender(errors.Unwrap(err)))
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 		}
 	}
 
@@ -126,11 +128,11 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 
 	t, err := template.ParseFiles("../internal/frontend/shortenURL.html")
 	if err != nil {
-		log.Print("template parsing error: ", err)
+		log.Error("template parsing error: ", err)
 	}
 	err = t.Execute(w, shortenURLVars)
 	if err != nil {
-		log.Print("template executing error: ", err)
+		log.Error("template executing error: ", err)
 	}
 
 }
@@ -140,23 +142,24 @@ func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL 
 
 	if shortURL == "" {
 		err := render.Render(w, r, apichi.ErrInvalidRequest(http.ErrNotSupported))
+		log.Error(err)
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 		}
 		return
 	}
 
 	ip, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
-		log.Println(err)
-		return
+		log.Error(err)
 	}
 
 	nud, err := rt.hs.RedirectionHandle(r.Context(), shortURL, ip)
 	if err != nil {
-		err = render.Render(w, r, apichi.ErrRender(err))
+		log.Error(errors.Unwrap(err))
+		err = render.Render(w, r, apichi.ErrRender(errors.Unwrap(err)))
 		if err != nil {
-			log.Println(err)
+			log.Error(err)
 		}
 		return
 	}
@@ -169,12 +172,11 @@ func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL 
 func (rt *OpenApiChi) GetUserFullURL(w http.ResponseWriter, r *http.Request) {
 	t, err := template.ParseFiles("../internal/frontend/homepage.html")
 	if err != nil {
-		log.Print("template parsing error: ", err)
+		log.Error("template parsing error: ", err)
 	}
 
 	err = t.Execute(w, nil)
 	if err != nil {
-		log.Print("template execute error: ", err)
+		log.Error("template execute error: ", err)
 	}
-
 }

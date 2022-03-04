@@ -4,7 +4,6 @@ import (
 	"CourseWork/internal/dbbackend"
 	"CourseWork/internal/entities"
 	"context"
-	"fmt"
 )
 
 type Handlers struct {
@@ -35,7 +34,7 @@ func (rt *Handlers) RedirectionHandle(ctx context.Context, surl string, ip strin
 	}
 	newdub, err := rt.ds.WriteData(ctx, bud)
 	if err != nil {
-		return ApiUrlData{}, fmt.Errorf("error when creating: %w", err)
+		return ApiUrlData{}, err
 	}
 	return ApiUrlData{
 		FullURL:  newdub.FullURL,
@@ -52,12 +51,12 @@ func (rt *Handlers) GetDataHandle(ctx context.Context, ud ApiUrlData) (ApiUrlDat
 	}
 	newdub, err := rt.ds.ReadURL(ctx, bud)
 	if err != nil {
-		return ApiUrlData{}, "", fmt.Errorf("error when creating: %w", err)
+		return ApiUrlData{}, "", err
 	}
 
 	ipdata, err := rt.ds.GetIPData(ctx, bud)
 	if err != nil {
-		return ApiUrlData{}, "", fmt.Errorf("error when creating: %w", err)
+		return ApiUrlData{}, "", err
 	}
 
 	return ApiUrlData(*newdub), ipdata, nil
@@ -71,7 +70,7 @@ func (rt *Handlers) GenShortUrlHandle(ctx context.Context, ud ApiUrlData) (ApiUr
 
 	newdub, err := rt.ds.WriteURL(ctx, bud)
 	if err != nil {
-		return ApiUrlData{}, fmt.Errorf("error when creating: %w", err)
+		return ApiUrlData{}, err
 	}
 
 	return ApiUrlData(*newdub), nil

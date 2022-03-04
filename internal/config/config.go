@@ -1,9 +1,10 @@
 package config
 
 import (
-	"log"
 	"os"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/joho/godotenv"
 )
@@ -22,18 +23,15 @@ func (c *Config) loadConfigFile(file string) error {
 	}
 	c.ReadTimeout, err = strconv.Atoi(os.Getenv("READTIMEOUT"))
 	if err != nil {
-		//Log it
-		log.Println(err)
+		log.Error(err)
 	}
 	c.WriteTimeout, err = strconv.Atoi(os.Getenv("WRITETIMEOUT"))
 	if err != nil {
-		//Log it
-		log.Println(err)
+		log.Error(err)
 	}
 	c.ReadHeaderTimeout, err = strconv.Atoi(os.Getenv("READHEADERTIMEOUT"))
 	if err != nil {
-		//Log it
-		log.Println(err)
+		log.Error(err)
 	}
 
 	return nil

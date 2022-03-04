@@ -6,12 +6,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func LogErrors() {
+func LogErrors(filename string) (*os.File, error) {
 	log.SetFormatter(&log.JSONFormatter{})
-	f, err := os.OpenFile("logs/error.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalf("Error opening file: %v", err)
+		return nil, err
 	}
-	defer f.Close()
+
 	log.SetOutput(f)
+
+	return f, nil
 }

@@ -3,7 +3,6 @@ package process
 //This package is goint to hold business processes and import only urldata.go
 
 import (
-	"log"
 	"math/rand"
 	"net/url"
 	"strconv"
@@ -30,8 +29,7 @@ func ValidateURL(fullURL string) error {
 func UpdateNumOfUses(data string) (string, error) {
 	iv, err := strconv.Atoi(data)
 	if err != nil {
-		//Log it with logrus
-		log.Println(err)
+		return "", err
 	}
 	iv++
 	data = strconv.Itoa(iv)
