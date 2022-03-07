@@ -162,9 +162,8 @@ func (fd *FullDataFile) GetIPData(ctx context.Context, url entities.UrlData) (st
 }
 
 func (fd *FullDataFile) Close() {
-	//Add check
 	fd.shorturldb.Close()
 	fd.adminurldb.Close()
 	fd.datadb.Close()
-
+	fd.ipdb.Close()
 }
