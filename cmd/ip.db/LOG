@@ -130,3 +130,22 @@
 16:01:13.617247 version@stat F·[] S·0B[] Sc·[]
 16:01:13.620616 db@janitor F·2 G·0
 16:01:13.620645 db@open done T·4.26637ms
+=============== Mar 7, 2022 (MSK) ===============
+11:36:13.218279 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+11:36:13.228512 version@stat F·[] S·0B[] Sc·[]
+11:36:13.228526 db@open opening
+11:36:13.228589 journal@recovery F·1
+11:36:13.228874 journal@recovery recovering @28
+11:36:13.231297 memdb@flush created L0@30 N·2 S·145B "O0w..0.1,v2":"O0w..0.1,v1"
+11:36:13.234037 version@stat F·[1] S·145B[145B] Sc·[0.25]
+11:36:13.238293 db@janitor F·3 G·0
+11:36:13.238309 db@open done T·9.779546ms
+=============== Mar 7, 2022 (MSK) ===============
+11:36:41.623003 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+11:36:41.623090 version@stat F·[1] S·145B[145B] Sc·[0.25]
+11:36:41.623113 db@open opening
+11:36:41.623143 journal@recovery F·1
+11:36:41.623403 journal@recovery recovering @31
+11:36:41.624131 version@stat F·[1] S·145B[145B] Sc·[0.25]
+11:36:41.627535 db@janitor F·3 G·0
+11:36:41.627580 db@open done T·4.456293ms
