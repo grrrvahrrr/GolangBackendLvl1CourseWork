@@ -1,0 +1,103 @@
+openapi: '3.0.2'
+info:
+  title: BitMe URL shortener
+  version: '1.0'
+servers:
+  - url: https://api.server.test/v1
+components:
+  schemas:
+    URLs:
+      type: object
+      properties:
+        fullURL:
+          type: string
+        adminURL:
+          type: string
+        shortURL:
+          type: string
+        data:
+          type: string
+      #some other data in future maybe
+paths:
+  /home:
+     get:
+      operationId: getUserFullURL
+      description: Get URLs from USER
+      requestBody:
+        description: json body
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/URLs'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: not a URL
+        '500':
+          description: internal server error
+  /shortenURL:
+    post:
+      operationId: GenShortURL
+      description: Generate short URL
+      requestBody:
+        description: json body
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/URLs'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/URLs"
+        '400':
+          description: not a URL
+        '500':
+          description: internal server error
+  /getData/{adminURL}:
+    get:
+      description: Redirect to Data
+      operationId: AdminRedirect
+      parameters:
+        - name: adminURL
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/URLs"
+        '404':
+          description: admin URL not found
+        '500':
+          description: internal server error
+  /su/{shortURL}:
+    get:
+      description: Redirect to FullURL
+      operationId: Redirect
+      parameters:
+        - name: shortURL
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+           description: successful operation
+           content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/URLs"
+        '404':
+          description: URL not found
+        '500':
+          description: internal server error
