@@ -466,3 +466,40 @@
 11:36:41.619643 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
 11:36:41.622945 db@janitor F·5 G·0
 11:36:41.622973 db@open done T·3.655817ms
+=============== Mar 7, 2022 (MSK) ===============
+13:04:14.510268 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:04:14.510328 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
+13:04:14.510338 db@open opening
+13:04:14.510361 journal@recovery F·1
+13:04:14.510523 journal@recovery recovering @96
+13:04:14.510881 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
+13:04:14.514217 db@janitor F·5 G·0
+13:04:14.514235 db@open done T·3.89293ms
+=============== Mar 7, 2022 (MSK) ===============
+13:11:12.336834 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:11:12.336936 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
+13:11:12.336947 db@open opening
+13:11:12.336973 journal@recovery F·1
+13:11:12.337307 journal@recovery recovering @98
+13:11:12.337671 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
+13:11:12.345627 db@janitor F·5 G·0
+13:11:12.345675 db@open done T·8.723818ms
+=============== Mar 7, 2022 (MSK) ===============
+13:12:30.994376 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:12:30.994545 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
+13:12:30.994554 db@open opening
+13:12:30.994747 journal@recovery F·1
+13:12:30.995483 journal@recovery recovering @100
+13:12:30.998940 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
+13:12:31.003056 db@janitor F·5 G·0
+13:12:31.003075 db@open done T·8.517135ms
+=============== Mar 7, 2022 (MSK) ===============
+14:19:30.413601 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+14:19:30.413662 version@stat F·[0 3] S·439B[0B 439B] Sc·[0.00 0.00]
+14:19:30.413672 db@open opening
+14:19:30.413696 journal@recovery F·1
+14:19:30.413899 journal@recovery recovering @102
+14:19:30.415576 memdb@flush created L0@104 N·2 S·135B "yHC..RCQ,v52":"yHC..RCQ,v51"
+14:19:30.415817 version@stat F·[1 3] S·574B[135B 439B] Sc·[0.25 0.00]
+14:19:30.419556 db@janitor F·6 G·0
+14:19:30.419573 db@open done T·5.89649ms

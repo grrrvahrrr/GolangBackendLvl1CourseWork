@@ -401,3 +401,42 @@
 11:36:41.594972 version@stat F·[3] S·428B[428B] Sc·[0.75]
 11:36:41.611411 db@janitor F·5 G·0
 11:36:41.611435 db@open done T·17.642429ms
+=============== Mar 7, 2022 (MSK) ===============
+13:04:14.496929 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:04:14.497035 version@stat F·[3] S·428B[428B] Sc·[0.75]
+13:04:14.497044 db@open opening
+13:04:14.497070 journal@recovery F·1
+13:04:14.497582 journal@recovery recovering @75
+13:04:14.498950 version@stat F·[3] S·428B[428B] Sc·[0.75]
+13:04:14.504970 db@janitor F·5 G·0
+13:04:14.505030 db@open done T·7.959821ms
+=============== Mar 7, 2022 (MSK) ===============
+13:11:12.286425 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:11:12.286667 version@stat F·[3] S·428B[428B] Sc·[0.75]
+13:11:12.286681 db@open opening
+13:11:12.286710 journal@recovery F·1
+13:11:12.287375 journal@recovery recovering @77
+13:11:12.287951 version@stat F·[3] S·428B[428B] Sc·[0.75]
+13:11:12.291887 db@janitor F·5 G·0
+13:11:12.291913 db@open done T·5.226539ms
+=============== Mar 7, 2022 (MSK) ===============
+13:12:30.974065 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:12:30.974173 version@stat F·[3] S·428B[428B] Sc·[0.75]
+13:12:30.974197 db@open opening
+13:12:30.974232 journal@recovery F·1
+13:12:30.975123 journal@recovery recovering @79
+13:12:30.975823 version@stat F·[3] S·428B[428B] Sc·[0.75]
+13:12:30.981886 db@janitor F·5 G·0
+13:12:30.981909 db@open done T·7.704695ms
+=============== Mar 7, 2022 (MSK) ===============
+14:19:30.395416 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+14:19:30.395658 version@stat F·[3] S·428B[428B] Sc·[0.75]
+14:19:30.395671 db@open opening
+14:19:30.395717 journal@recovery F·1
+14:19:30.396205 journal@recovery recovering @81
+14:19:30.400884 memdb@flush created L0@83 N·1 S·149B "yHC..RCQ,v7":"yHC..RCQ,v7"
+14:19:30.401076 version@stat F·[4] S·577B[577B] Sc·[1.00]
+14:19:30.404332 db@janitor F·6 G·0
+14:19:30.404362 db@open done T·8.680921ms
+14:19:30.405272 table@move L0@83 -> L1
+14:19:30.405367 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]

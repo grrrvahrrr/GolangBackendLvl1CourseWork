@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+
+  registry:
+    image: registry:2
+    container_name: registryBitme
+    ports:
+      - 5000:5000
+    restart: always
+    networks:
+      - bitmenet
+
+  bitme:
+    image: 127.0.0.1:5000/bitme:latest
+    container_name: bitme
+    build: .
+    restart: always
+    ports:
+      - 8000:8000
+    depends_on:
+      - registry
+    networks:
+      - bitmenet
+
+networks:
+  bitmenet:

@@ -26,7 +26,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 
 	//Logging
-	f, err := logging.LogErrors("logs/error.log")
+	f, err := logging.LogErrors("error.log")
 	if err != nil {
 		log.Fatal("Error opening file: ", err)
 	}

@@ -149,3 +149,40 @@
 11:36:41.624131 version@stat F·[1] S·145B[145B] Sc·[0.25]
 11:36:41.627535 db@janitor F·3 G·0
 11:36:41.627580 db@open done T·4.456293ms
+=============== Mar 7, 2022 (MSK) ===============
+13:04:14.514276 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:04:14.514339 version@stat F·[1] S·145B[145B] Sc·[0.25]
+13:04:14.514349 db@open opening
+13:04:14.514375 journal@recovery F·1
+13:04:14.514436 journal@recovery recovering @33
+13:04:14.514643 version@stat F·[1] S·145B[145B] Sc·[0.25]
+13:04:14.518123 db@janitor F·3 G·0
+13:04:14.518142 db@open done T·3.788409ms
+=============== Mar 7, 2022 (MSK) ===============
+13:11:12.345737 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:11:12.345820 version@stat F·[1] S·145B[145B] Sc·[0.25]
+13:11:12.345840 db@open opening
+13:11:12.345877 journal@recovery F·1
+13:11:12.346260 journal@recovery recovering @35
+13:11:12.346428 version@stat F·[1] S·145B[145B] Sc·[0.25]
+13:11:12.351267 db@janitor F·3 G·0
+13:11:12.351297 db@open done T·5.443346ms
+=============== Mar 7, 2022 (MSK) ===============
+13:12:31.003122 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:12:31.003184 version@stat F·[1] S·145B[145B] Sc·[0.25]
+13:12:31.003194 db@open opening
+13:12:31.003218 journal@recovery F·1
+13:12:31.003291 journal@recovery recovering @37
+13:12:31.005198 version@stat F·[1] S·145B[145B] Sc·[0.25]
+13:12:31.011013 db@janitor F·3 G·0
+13:12:31.011089 db@open done T·7.890422ms
+=============== Mar 7, 2022 (MSK) ===============
+14:19:30.419602 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+14:19:30.419671 version@stat F·[1] S·145B[145B] Sc·[0.25]
+14:19:30.419682 db@open opening
+14:19:30.419707 journal@recovery F·1
+14:19:30.419770 journal@recovery recovering @39
+14:19:30.420901 memdb@flush created L0@41 N·1 S·136B "yHC..0.1,v4":"yHC..0.1,v4"
+14:19:30.421080 version@stat F·[2] S·281B[281B] Sc·[0.50]
+14:19:30.424224 db@janitor F·4 G·0
+14:19:30.424237 db@open done T·4.551667ms
