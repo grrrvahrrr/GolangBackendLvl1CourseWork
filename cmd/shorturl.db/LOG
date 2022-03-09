@@ -449,3 +449,39 @@
 10:57:25.782034 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
 10:57:25.786279 db@janitor F·6 G·0
 10:57:25.786320 db@open done T·5.422288ms
+=============== Mar 9, 2022 (MSK) ===============
+11:09:03.900013 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+11:09:03.900242 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:09:03.900257 db@open opening
+11:09:03.900288 journal@recovery F·1
+11:09:03.900832 journal@recovery recovering @86
+11:09:03.901659 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:09:03.906090 db@janitor F·6 G·0
+11:09:03.906166 db@open done T·5.858392ms
+=============== Mar 9, 2022 (MSK) ===============
+11:09:22.536449 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+11:09:22.536629 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:09:22.536655 db@open opening
+11:09:22.536697 journal@recovery F·1
+11:09:22.537281 journal@recovery recovering @88
+11:09:22.537948 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:09:22.551150 db@janitor F·6 G·0
+11:09:22.551190 db@open done T·14.515488ms
+=============== Mar 9, 2022 (MSK) ===============
+11:12:15.253623 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+11:12:15.254003 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:12:15.254019 db@open opening
+11:12:15.254081 journal@recovery F·1
+11:12:15.254516 journal@recovery recovering @90
+11:12:15.254949 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:12:15.287517 db@janitor F·6 G·0
+11:12:15.287570 db@open done T·33.538987ms
+=============== Mar 9, 2022 (MSK) ===============
+11:27:22.221042 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+11:27:22.221191 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:27:22.221224 db@open opening
+11:27:22.221290 journal@recovery F·1
+11:27:22.222006 journal@recovery recovering @92
+11:27:22.222791 version@stat F·[3 1] S·577B[428B 149B] Sc·[0.75 0.00]
+11:27:22.227535 db@janitor F·6 G·0
+11:27:22.227577 db@open done T·6.324452ms

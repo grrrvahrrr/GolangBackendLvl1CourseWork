@@ -3,6 +3,7 @@ package main
 import (
 	"CourseWork/internal/apichi"
 	"CourseWork/internal/apichi/openapichi"
+	"CourseWork/internal/config"
 	"CourseWork/internal/database"
 	"CourseWork/internal/dbbackend"
 	"CourseWork/internal/logging"
@@ -32,14 +33,22 @@ func main() {
 	defer f.Close()
 
 	//Load Config
-	// path, err := os.Getwd()
-	// if err != nil {
-	// 	log.Error(err)
-	// }
-	// cfg, err := config.LoadConfig(path + "/config/config.env")
-	// if err != nil {
-	// 	log.Fatal("Error loading config: ", err)
-	// }
+	path, err := os.Getwd()
+	if err != nil {
+		log.Error(err)
+	}
+
+	cf, err := os.OpenFile(path+"/config/config.env", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal("Error opening file: ", err)
+	}
+
+	defer cf.Close()
+
+	cfg, err := config.LoadConfig(path + "/config/config.env")
+	if err != nil {
+		log.Fatal("Error loading config: ", err)
+	}
 
 	//Creating Storage
 	udf, err := database.NewFullDataFile("shorturl.db", "adminurl.db", "data.db", "ip.db")
@@ -51,7 +60,7 @@ func main() {
 	//Creating router and server
 	hs := apichi.NewHandlers(dbbe)
 	rt := openapichi.NewOpenApiRouter(hs)
-	srv := server.NewServer(":"+os.Getenv("PORT"), rt)
+	srv := server.NewServer(":"+os.Getenv("PORT"), rt, cfg)
 
 	//Starting
 	srv.Start(dbbe)
