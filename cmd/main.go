@@ -52,7 +52,7 @@ func main() {
 	//Creating router and server
 	hs := apichi.NewHandlers(dbbe)
 	rt := openapichi.NewOpenApiRouter(hs)
-	srv := server.NewServer(":8000", rt, cfg)
+	srv := server.NewServer(":"+os.Getenv("PORT"), rt, cfg)
 
 	//Starting
 	srv.Start(dbbe)
