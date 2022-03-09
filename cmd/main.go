@@ -38,7 +38,7 @@ func main() {
 	// 	log.Error(err)
 	// }
 
-	cfg, err := config.LoadConfig("./bitme/static/bitme/config.env")
+	cfg, err := config.LoadConfig("app/cmd/static/config.env")
 	if err != nil {
 		log.Fatal("Error loading config: ", err)
 	}

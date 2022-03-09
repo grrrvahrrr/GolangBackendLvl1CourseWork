@@ -16,3 +16,5 @@
 {"level":"fatal","msg":"Error loading config: open /static/config.env: no such file or directory","time":"2022-03-09T12:49:05+03:00"}
 {"level":"fatal","msg":"http: Server closed","time":"2022-03-09T12:49:23+03:00"}
 {"level":"fatal","msg":"http: Server closed","time":"2022-03-09T12:49:50+03:00"}
+{"level":"fatal","msg":"http: Server closed","time":"2022-03-09T13:11:41+03:00"}
+{"level":"fatal","msg":"http: Server closed","time":"2022-03-09T13:12:01+03:00"}
