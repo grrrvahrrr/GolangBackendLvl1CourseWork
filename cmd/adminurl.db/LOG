@@ -440,3 +440,12 @@
 14:19:30.413576 db@open done T·9.097351ms
 14:19:30.413613 table@move L0@83 -> L1
 14:19:30.413661 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+=============== Mar 9, 2022 (MSK) ===============
+10:57:25.786366 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+10:57:25.786467 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+10:57:25.786486 db@open opening
+10:57:25.786543 journal@recovery F·1
+10:57:25.787388 journal@recovery recovering @84
+10:57:25.787651 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+10:57:25.799876 db@janitor F·6 G·0
+10:57:25.799912 db@open done T·13.405147ms

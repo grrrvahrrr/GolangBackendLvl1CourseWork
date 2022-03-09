@@ -186,3 +186,12 @@
 14:19:30.421080 version@stat F·[2] S·281B[281B] Sc·[0.50]
 14:19:30.424224 db@janitor F·4 G·0
 14:19:30.424237 db@open done T·4.551667ms
+=============== Mar 9, 2022 (MSK) ===============
+10:57:25.804242 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+10:57:25.804382 version@stat F·[2] S·281B[281B] Sc·[0.50]
+10:57:25.804403 db@open opening
+10:57:25.804435 journal@recovery F·1
+10:57:25.804676 journal@recovery recovering @42
+10:57:25.804821 version@stat F·[2] S·281B[281B] Sc·[0.50]
+10:57:25.808186 db@janitor F·4 G·0
+10:57:25.808213 db@open done T·3.797593ms
