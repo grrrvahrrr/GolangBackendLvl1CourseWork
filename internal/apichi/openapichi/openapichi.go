@@ -83,7 +83,7 @@ func (rt *OpenApiChi) AdminRedirect(w http.ResponseWriter, r *http.Request, admi
 		IPData:   ipdata,
 	}
 
-	t, err := template.ParseFiles("../internal/frontend/getData.html")
+	t, err := template.ParseFiles("getData.html")
 	if err != nil {
 		log.Error("template parsing error: ", err)
 	}
@@ -126,7 +126,7 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 		FullURL:  nud.FullURL,
 	}
 
-	t, err := template.ParseFiles("../internal/frontend/shortenURL.html")
+	t, err := template.ParseFiles("shortenURL.html")
 	if err != nil {
 		log.Error("template parsing error: ", err)
 	}
@@ -170,7 +170,7 @@ func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL 
 
 // (GET /home)
 func (rt *OpenApiChi) GetUserFullURL(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("../internal/frontend/homepage.html")
+	t, err := template.ParseFiles("homepage.html")
 	if err != nil {
 		log.Error("template parsing error: ", err)
 	}
