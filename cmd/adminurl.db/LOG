@@ -512,3 +512,39 @@
 11:49:47.673766 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
 11:49:47.680630 db@janitor F·6 G·0
 11:49:47.680651 db@open done T·8.380247ms
+=============== Mar 9, 2022 (MSK) ===============
+12:46:40.897046 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+12:46:40.897568 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:46:40.897631 db@open opening
+12:46:40.897681 journal@recovery F·1
+12:46:40.898872 journal@recovery recovering @100
+12:46:40.899229 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:46:40.902867 db@janitor F·6 G·0
+12:46:40.902893 db@open done T·5.246234ms
+=============== Mar 9, 2022 (MSK) ===============
+12:48:01.226458 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+12:48:01.226669 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:48:01.226695 db@open opening
+12:48:01.226766 journal@recovery F·1
+12:48:01.227862 journal@recovery recovering @102
+12:48:01.233264 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:48:01.252498 db@janitor F·6 G·0
+12:48:01.252582 db@open done T·25.875664ms
+=============== Mar 9, 2022 (MSK) ===============
+12:49:11.168358 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+12:49:11.168820 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:49:11.168841 db@open opening
+12:49:11.168884 journal@recovery F·1
+12:49:11.169881 journal@recovery recovering @104
+12:49:11.170206 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:49:11.175955 db@janitor F·6 G·0
+12:49:11.175979 db@open done T·7.129844ms
+=============== Mar 9, 2022 (MSK) ===============
+12:49:39.952519 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+12:49:39.952729 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:49:39.952757 db@open opening
+12:49:39.952798 journal@recovery F·1
+12:49:39.954924 journal@recovery recovering @106
+12:49:39.955265 version@stat F·[3 1] S·532B[399B 133B] Sc·[0.75 0.00]
+12:49:39.959407 db@janitor F·6 G·0
+12:49:39.959545 db@open done T·6.77276ms
