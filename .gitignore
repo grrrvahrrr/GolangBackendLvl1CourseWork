@@ -1,6 +1,6 @@
-app/
-cmd/error.log
-cmd/adminurl.db
-cmd/data.db
-cmd/shorturl.db
-cmd/data.db
+/app
+error.log
+cmd/adminurl.db/
+cmd/data.db/
+cmd/shorturl.db/
+cmd/data.db/
