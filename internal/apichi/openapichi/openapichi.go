@@ -2,6 +2,7 @@ package openapichi
 
 import (
 	"CourseWork/internal/apichi"
+	"embed"
 	"encoding/json"
 	"errors"
 	"html/template"
@@ -14,6 +15,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 )
+
+//go:embed pages
+var tpls embed.FS
 
 type OpenApiChi struct {
 	*chi.Mux
@@ -83,7 +87,7 @@ func (rt *OpenApiChi) AdminRedirect(w http.ResponseWriter, r *http.Request, admi
 		IPData:   ipdata,
 	}
 
-	t, err := template.ParseFiles("./static/getData.html")
+	t, err := template.ParseFS(tpls, "pages/getData.html")
 	if err != nil {
 		log.Error("template parsing error: ", err)
 	}
@@ -126,7 +130,7 @@ func (rt *OpenApiChi) GenShortURL(w http.ResponseWriter, r *http.Request) {
 		FullURL:  nud.FullURL,
 	}
 
-	t, err := template.ParseFiles("./static/shortenURL.html")
+	t, err := template.ParseFS(tpls, "pages/shortenURL.html")
 	if err != nil {
 		log.Error("template parsing error: ", err)
 	}
@@ -170,7 +174,7 @@ func (rt *OpenApiChi) Redirect(w http.ResponseWriter, r *http.Request, shortURL 
 
 // (GET /home)
 func (rt *OpenApiChi) GetUserFullURL(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("./static/homepage.html")
+	t, err := template.ParseFS(tpls, "pages/homepage.html")
 	if err != nil {
 		log.Error("template parsing error: ", err)
 	}

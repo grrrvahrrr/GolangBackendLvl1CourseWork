@@ -1,7 +1,6 @@
 package config
 
 import (
-	"os"
 	"strconv"
 
 	log "github.com/sirupsen/logrus"
@@ -17,19 +16,21 @@ type Config struct {
 
 func (c *Config) loadConfigFile(file string) error {
 	var err error
-	err = godotenv.Load(file)
+	var myEnv map[string]string
+
+	myEnv, err = godotenv.Unmarshal(file)
 	if err != nil {
 		return err
 	}
-	c.ReadTimeout, err = strconv.Atoi(os.Getenv("READTIMEOUT"))
+	c.ReadTimeout, err = strconv.Atoi(myEnv["READTIMEOUT"])
 	if err != nil {
 		log.Error(err)
 	}
-	c.WriteTimeout, err = strconv.Atoi(os.Getenv("WRITETIMEOUT"))
+	c.WriteTimeout, err = strconv.Atoi(myEnv["WRITETIMEOUT"])
 	if err != nil {
 		log.Error(err)
 	}
-	c.ReadHeaderTimeout, err = strconv.Atoi(os.Getenv("READHEADERTIMEOUT"))
+	c.ReadHeaderTimeout, err = strconv.Atoi(myEnv["READHEADERTIMEOUT"])
 	if err != nil {
 		log.Error(err)
 	}

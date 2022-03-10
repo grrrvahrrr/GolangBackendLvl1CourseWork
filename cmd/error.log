@@ -18,3 +18,30 @@
 {"level":"fatal","msg":"http: Server closed","time":"2022-03-09T12:49:50+03:00"}
 {"level":"fatal","msg":"http: Server closed","time":"2022-03-09T13:11:41+03:00"}
 {"level":"fatal","msg":"http: Server closed","time":"2022-03-09T13:12:01+03:00"}
+{"level":"fatal","msg":"http: Server closed","time":"2022-03-09T17:35:47+03:00"}
+{"level":"fatal","msg":"http: Server closed","time":"2022-03-09T17:36:28+03:00"}
+{"level":"fatal","msg":"Error loading config: open READTIMEOUT=30\nWRITETIMEOUT=30\nREADHEADERTIMEOUT=30\n: no such file or directory","time":"2022-03-10T10:21:55+03:00"}
+{"level":"fatal","msg":"Error loading config: open READTIMEOUT=30\nWRITETIMEOUT=30\nREADHEADERTIMEOUT=30\n: no such file or directory","time":"2022-03-10T10:23:59+03:00"}
+{"level":"fatal","msg":"http: Server closed","time":"2022-03-10T10:30:35+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:31+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"error","msg":"template parsing error: template: pattern matches no files: `homepage`","time":"2022-03-10T10:43:33+03:00"}
+{"level":"fatal","msg":"http: Server closed","time":"2022-03-10T10:43:36+03:00"}
+{"level":"fatal","msg":"http: Server closed","time":"2022-03-10T10:48:47+03:00"}
