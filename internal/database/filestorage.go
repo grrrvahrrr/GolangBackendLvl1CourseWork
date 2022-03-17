@@ -122,15 +122,17 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 		return nil, fmt.Errorf("error reading datadb : %w", err)
 	}
 
-	d := strings.Join([]string{fd.URLData.ShortURL, fd.URLData.IP}, ":")
+	if url.IP != "" {
+		d := strings.Join([]string{fd.URLData.ShortURL, fd.URLData.IP}, ":")
 
-	ipdata, err := fd.ipdb.Get([]byte(d), nil)
-	if err != nil && err != leveldb.ErrNotFound {
-		return nil, fmt.Errorf("error reading ipdb : %w", err)
-	} else if err == leveldb.ErrNotFound {
-		fd.URLData.IPData = "0"
-	} else {
-		fd.URLData.IPData = string(ipdata)
+		ipdata, err := fd.ipdb.Get([]byte(d), nil)
+		if err != nil && err != leveldb.ErrNotFound {
+			return nil, fmt.Errorf("error reading ipdb : %w", err)
+		} else if err == leveldb.ErrNotFound {
+			fd.URLData.IPData = "1"
+		} else {
+			fd.URLData.IPData = string(ipdata)
+		}
 	}
 
 	return &entities.UrlData{
