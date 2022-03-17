@@ -129,7 +129,7 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 		if err != nil && err != leveldb.ErrNotFound {
 			return nil, fmt.Errorf("error reading ipdb : %w", err)
 		} else if err == leveldb.ErrNotFound {
-			fd.URLData.IPData = "1"
+			fd.URLData.IPData = "0"
 		} else {
 			fd.URLData.IPData = string(ipdata)
 		}
