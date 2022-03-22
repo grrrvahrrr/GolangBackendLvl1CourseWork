@@ -54,6 +54,8 @@ func (rt *Handlers) GetDataHandle(ctx context.Context, ud ApiUrlData) (ApiUrlDat
 		return ApiUrlData{}, "", err
 	}
 
+	bud.ShortURL = newdub.ShortURL
+
 	ipdata, err := rt.ds.GetIPData(ctx, bud)
 	if err != nil {
 		return ApiUrlData{}, "", err

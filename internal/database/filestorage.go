@@ -148,12 +148,12 @@ func (fd *FullDataFile) ReadURL(ctx context.Context, url entities.UrlData) (*ent
 
 func (fd *FullDataFile) GetIPData(ctx context.Context, url entities.UrlData) (string, error) {
 	var ipdata string
-	iter := fd.ipdb.NewIterator(util.BytesPrefix([]byte(fd.URLData.ShortURL)), nil)
+	iter := fd.ipdb.NewIterator(util.BytesPrefix([]byte(url.ShortURL)), nil)
 	for iter.Next() {
 		key := iter.Key()
 		value := iter.Value()
 
-		ipdata += "IP: " + strings.TrimLeft(string(key), fd.URLData.ShortURL) + " # Redirects: " + string(value) + "\n"
+		ipdata += "IP: " + strings.TrimLeft(string(key), url.ShortURL) + " # Redirects: " + string(value) + "\n"
 	}
 	iter.Release()
 	err := iter.Error()
